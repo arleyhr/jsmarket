@@ -15,13 +15,13 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     app.enableCors();
-    Logger.log('CORS habilitado en desarrollo');
+    Logger.log('CORS enabled');
   }
 
   const port = process.env.PORT || 3333;
   await app.listen(port);
   Logger.log(
-    `🚀 Aplicación corriendo en: http://localhost:${port}/${globalPrefix}`
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
 }
 

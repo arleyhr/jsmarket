@@ -1,21 +1,24 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Args, Int } from '@nestjs/graphql';
+
+import { Product, Products, Category } from './entities/product.entity';
 import { ProductsService } from './products.service';
-import { Product } from './entities/product.entity';
-import { CreateProductInput } from './dto/create-product.input';
-import { UpdateProductInput } from './dto/update-product.input';
 
 @Resolver(() => Product)
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Mutation(() => Product)
-  createProduct(@Args('createProductInput') createProductInput: CreateProductInput) {
-    return this.productsService.create(createProductInput);
-  }
+  @Query(() => Products, { name: 'products' })
+  async findAll(
+    @Args('page', { type: () => Int }) page: number,
+    @Args('perPage', { type: () => Int }) perPage: number,
+    @Args('sortBy', { type: () => String, nullable: true }) sortBy?: string,
+    @Args('order', { type: () => String, nullable: true }) order?: string,
+    @Args('search', { type: () => String, nullable: true }) search?: string,
+    @Args('category', { type: () => String, nullable: true }) category?: string
+  ) {
+    const result = await this.productsService.findAll(page, perPage, sortBy, order, search, category);
 
-  @Query(() => [Product], { name: 'products' })
-  findAll() {
-    return this.productsService.findAll();
+    return result;
   }
 
   @Query(() => Product, { name: 'product' })
@@ -23,13 +26,8 @@ export class ProductsResolver {
     return this.productsService.findOne(id);
   }
 
-  @Mutation(() => Product)
-  updateProduct(@Args('updateProductInput') updateProductInput: UpdateProductInput) {
-    return this.productsService.update(updateProductInput.id, updateProductInput);
-  }
-
-  @Mutation(() => Product)
-  removeProduct(@Args('id', { type: () => Int }) id: number) {
-    return this.productsService.remove(id);
+  @Query(() => [Category], { name: 'categories' })
+  getCategories() {
+    return this.productsService.getCategories();
   }
 }
