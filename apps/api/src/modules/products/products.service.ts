@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductInput } from './dto/create-product.input';
-import { UpdateProductInput } from './dto/update-product.input';
+
+import { Category, Product, Products } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-  create(createProductInput: CreateProductInput) {
-    return 'This action adds a new product';
+  private readonly baseUrl = 'https://dummyjson.com';
+
+  async findAll(
+    page = 1,
+    perPage = 20,
+    sortBy = 'rating',
+    order = 'desc',
+    search = '',
+    category = ''
+  ): Promise<Products> {
+    const query = `page=${page}&limit=${perPage}&sortBy=${sortBy}&order=${order}&search=${search}`;
+    const url = category.length
+      ? `${this.baseUrl}/products/category/${category}?${query}`
+      : `${this.baseUrl}/products?${query}`;
+    const response = await fetch(url);
+    const result = await response.json();
+
+    return { ...result, data: result.products };
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findOne(id: number): Promise<Product> {
+    const response = await fetch(`${this.baseUrl}/products/${id}`);
+    const result = await response.json();
+
+    return result;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
-  }
+  async getCategories(): Promise<Category[]> {
+    const response = await fetch(`${this.baseUrl}/products/categories`);
+    const result = await response.json();
 
-  update(id: number, updateProductInput: UpdateProductInput) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+    return result;
   }
 }
