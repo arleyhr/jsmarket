@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { Product, Products, Category, AvailabilityStatus } from './entities/product.entity';
+import { Product, Category, AvailabilityStatus } from './entities/product.entity';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {

@@ -8,6 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../modules/auth/auth.module';
 import { User } from '../modules/auth/entities/user.entity';
+import { CartsModule } from '../modules/carts/carts.module';
+import { CartItem } from '../modules/carts/entities/cart-item.entity';
+import { Cart } from '../modules/carts/entities/cart.entity';
 import { ProductsModule } from '../modules/products/products.module';
 
 import { AppController } from './app.controller';
@@ -18,32 +21,25 @@ import { AppService } from './app.service';
     ConfigModule.forRoot(),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
-        secretOrPrivateKey: configService.get('SECRET_KEY'),
-        secret: 'test',
+        secret: configService.get('SECRET_KEY') || 'test',
         signOptions: { expiresIn: '60s' },
       }),
       imports: [ConfigModule],
       inject: [ConfigService],
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('DATABASE_HOST'),
-        port: configService.get('DATABASE_PORT'),
-        username: configService.get('DATABASE_USERNAME'),
-        password: configService.get('DATABASE_PASSWORD'),
-        database: configService.get('DATABASE_NAME'),
-        entities: [User],
-      }),
-      inject: [ConfigService],
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: './db.sqlite',
+      entities: [User, Cart, CartItem],
+      synchronize: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
     }),
     AuthModule,
-    ProductsModule
+    ProductsModule,
+    CartsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

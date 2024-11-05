@@ -18,8 +18,20 @@ export class User {
   @Field()
   username: string;
 
-  @Column()
+  @Column({ type: 'text' })
   password: string;
+
+  @Column({ unique: true })
+  @Field()
+  email: string;
+
+  @Column()
+  @Field()
+  firstName: string;
+
+  @Column()
+  @Field()
+  lastName: string;
 
   @Column({
     default: UserRole.USER
@@ -29,11 +41,11 @@ export class User {
 
   @CreateDateColumn()
   @Field()
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
   @Field()
-  updated_at: Date;
+  updatedAt: Date;
 
   @BeforeInsert()
   async hashPassword() {
@@ -46,6 +58,15 @@ export class User {
 export class CreateUserInput {
   @Field()
   username: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  firstName: string;
+
+  @Field()
+  lastName: string;
 
   @Field()
   password: string;

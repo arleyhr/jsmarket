@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
 
+import { AuthService } from "./auth.service";
 import { UserRole } from "./entities/user.entity";
 
 @Injectable()
@@ -15,6 +16,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
 @Injectable()
 export class AdminGuard extends JwtAuthGuard {
+  constructor(private readonly authService: AuthService) {
+    super();
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isAuth = await super.canActivate(context);
 
@@ -25,6 +30,8 @@ export class AdminGuard extends JwtAuthGuard {
     const ctx = GqlExecutionContext.create(context);
     const { user } = ctx.getContext().req;
 
-    return user?.role === UserRole.ADMIN;
+    const result = await this.authService.findUserByUsername(user.username);
+
+    return result?.role === UserRole.ADMIN;
   }
 }

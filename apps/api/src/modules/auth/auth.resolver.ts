@@ -12,9 +12,11 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Query(() => AuthUser, { name: 'me' })
-  async me(@CurrentUser() user: AuthUser): Promise<AuthUser> {
-    return user;
+  @Query(() => User, { name: 'me' })
+  async me(@CurrentUser() user: AuthUser): Promise<User> {
+    const result = await this.authService.findUserByUsername(user.username);
+
+    return result;
   }
 
   @Mutation(() => User, { name: 'register' })
