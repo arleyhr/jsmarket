@@ -14,10 +14,6 @@ export class User {
   @Field()
   id: number;
 
-  @Column({ unique: true })
-  @Field()
-  username: string;
-
   @Column({ type: 'text' })
   password: string;
 
@@ -57,9 +53,6 @@ export class User {
 @InputType('UserInput')
 export class CreateUserInput {
   @Field()
-  username: string;
-
-  @Field()
   email: string;
 
   @Field()
@@ -75,7 +68,7 @@ export class CreateUserInput {
 @ObjectType('AuthUser')
 export class AuthUser {
   @Field()
-  username: string;
+  email: string;
 
   @Field()
   role: UserRole;

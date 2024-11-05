@@ -11,6 +11,8 @@ import { User } from '../modules/auth/entities/user.entity';
 import { CartsModule } from '../modules/carts/carts.module';
 import { CartItem } from '../modules/carts/entities/cart-item.entity';
 import { Cart } from '../modules/carts/entities/cart.entity';
+import { Order, OrderItem, OrderStatusHistory } from '../modules/orders/entities/order.entity';
+import { OrdersModule } from '../modules/orders/orders.module';
 import { ProductsModule } from '../modules/products/products.module';
 
 import { AppController } from './app.controller';
@@ -30,7 +32,7 @@ import { AppService } from './app.service';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: './db.sqlite',
-      entities: [User, Cart, CartItem],
+      entities: [User, Cart, CartItem, Order, OrderItem, OrderStatusHistory],
       synchronize: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -40,6 +42,7 @@ import { AppService } from './app.service';
     AuthModule,
     ProductsModule,
     CartsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

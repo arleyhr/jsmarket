@@ -63,7 +63,7 @@ describe('AuthService', () => {
   describe('createUser', () => {
     it('should create a new user successfully', async () => {
       const userData = {
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: 'password123',
         role: UserRole.USER
       };
@@ -80,9 +80,9 @@ describe('AuthService', () => {
       expect(mockUserRepository.save).toHaveBeenCalledWith(userData);
     });
 
-    it('should throw error if username already exists', async () => {
+    it('should throw error if email already exists', async () => {
       const userData = {
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: 'password123',
         role: UserRole.USER
       };
@@ -90,7 +90,7 @@ describe('AuthService', () => {
       mockUserRepository.create.mockReturnValue(userData);
       mockUserRepository.save.mockRejectedValue({ code: 'ER_DUP_ENTRY' });
 
-      await expect(service.createUser(userData)).rejects.toThrow('Username already exists');
+      await expect(service.createUser(userData)).rejects.toThrow('Email already exists');
     });
   });
 
@@ -98,14 +98,14 @@ describe('AuthService', () => {
     it('should return user if credentials are valid', async () => {
       const user = {
         id: 1,
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: await bcrypt.hash('password123', 10),
         role: 'user'
       };
 
       mockUserRepository.findOne.mockResolvedValue(user);
 
-      const result = await service.validateUser('testuser', 'password123');
+      const result = await service.validateUser('testuser@test.com', 'password123');
 
       expect(result).toEqual(user);
     });
@@ -113,14 +113,14 @@ describe('AuthService', () => {
     it('should return null if credentials are invalid', async () => {
       const user = {
         id: 1,
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: await bcrypt.hash('password123', 10),
         role: 'user'
       };
 
       mockUserRepository.findOne.mockResolvedValue(user);
 
-      const result = await service.validateUser('testuser', 'wrongpassword');
+      const result = await service.validateUser('testuser@test.com', 'wrongpassword');
 
       expect(result).toBeNull();
     });
@@ -130,7 +130,7 @@ describe('AuthService', () => {
     it('should return JWT token for valid credentials', async () => {
       const user = {
         id: 1,
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: await bcrypt.hash('password123', 10),
         role: 'user'
       };
@@ -142,11 +142,10 @@ describe('AuthService', () => {
       mockJwtService.sign.mockReturnValue(token);
       mockConfigService.get.mockReturnValue(secret);
 
-      const result = await service.login('testuser', 'password123');
-
+      const result = await service.login('testuser@test.com', 'password123');
       expect(result).toBe(token);
       expect(mockJwtService.sign).toHaveBeenCalledWith(
-        { username: user.username, sub: user.id, role: user.role },
+        { email: user.email, sub: user.id, role: user.role },
         { secret }
       );
     });
@@ -154,7 +153,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException for invalid credentials', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.login('testuser', 'wrongpassword')).rejects.toThrow();
+      await expect(service.login('testuser@test.com', 'wrongpassword')).rejects.toThrow();
     });
   });
 });

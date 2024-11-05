@@ -18,18 +18,24 @@ export class CartsService {
     private productsService: ProductsService
   ) {}
 
-  async findOrCreateCart(userId: number): Promise<Cart> {
-    let cart = await this.cartRepository.findOne({
+  async findCart(userId: number): Promise<Cart> {
+    return this.cartRepository.findOne({
       where: { user: { id: userId }, isActive: true },
       relations: ['items'],
     });
+  }
 
-    if (!cart) {
-      cart = this.cartRepository.create({ user: { id: userId }, isActive: true });
-      cart = await this.cartRepository.save(cart);
+  async findOrCreateCart(userId: number): Promise<Cart> {
+    const cart = await this.findCart(userId);
+
+    if (cart) {
+      return cart;
     }
 
-    return cart;
+    const newCart = this.cartRepository.create({ user: { id: userId }, isActive: true });
+    const result = await this.cartRepository.save(newCart);
+
+    return { ...result, items: [] };
   }
 
   async addItemToCart(userId: number, productId: number, quantity: number): Promise<Cart> {

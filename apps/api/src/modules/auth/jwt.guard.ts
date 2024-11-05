@@ -30,7 +30,7 @@ export class AdminGuard extends JwtAuthGuard {
     const ctx = GqlExecutionContext.create(context);
     const { user } = ctx.getContext().req;
 
-    const result = await this.authService.findUserByUsername(user.username);
+    const result = await this.authService.findUserByEmail(user.email);
 
     return result?.role === UserRole.ADMIN;
   }
