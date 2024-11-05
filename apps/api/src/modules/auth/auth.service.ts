@@ -24,19 +24,19 @@ export class AuthService {
       return result;
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
-        throw new Error('Username already exists');
+        throw new Error('Email already exists');
       }
 
       throw new Error('Error registering user');
     }
   }
 
-  async findUserByUsername(username: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { username } });
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
-  async validateUser(username: string, password: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ where: { username } });
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } });
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -47,15 +47,15 @@ export class AuthService {
     return null;
   }
 
-  async login(username: string, password: string): Promise<string> {
+  async login(email: string, password: string): Promise<string> {
     try {
-      const user = await this.validateUser(username, password);
+      const user = await this.validateUser(email, password);
 
       if (!user) {
         throw new Error('Invalid credentials');
       }
 
-      const payload = { username: user.username, sub: user.id, role: user.role };
+      const payload = { email: user.email, sub: user.id, role: user.role };
 
       const token = this.jwtService.sign(payload, { secret: this.configService.get('SECRET_KEY') });
 

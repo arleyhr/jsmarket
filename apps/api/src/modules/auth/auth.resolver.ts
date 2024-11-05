@@ -14,7 +14,7 @@ export class AuthResolver {
   @UseGuards(JwtAuthGuard)
   @Query(() => User, { name: 'me' })
   async me(@CurrentUser() user: AuthUser): Promise<User> {
-    const result = await this.authService.findUserByUsername(user.username);
+    const result = await this.authService.findUserByEmail(user.email);
 
     return result;
   }
@@ -25,7 +25,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => String, { name: 'login' })
-  async login(@Args('username') username: string, @Args('password') password: string): Promise<string> {
-    return this.authService.login(username, password);
+  async login(@Args('email') email: string, @Args('password') password: string): Promise<string> {
+    return this.authService.login(email, password);
   }
 }

@@ -66,15 +66,13 @@ describe('AuthResolver', () => {
   describe('signup', () => {
     it('should create a new user successfully', async () => {
       const userInput = {
-        username: 'testuser',
-        password: 'password123',
         email: 'test@test.com',
+        password: 'password123',
         firstName: 'Test',
         lastName: 'User'
       };
 
       const savedUser = {
-        username: userInput.username,
         role: UserRole.USER,
         email: 'test@test.com',
         firstName: 'Test',
@@ -86,7 +84,6 @@ describe('AuthResolver', () => {
       const result = await resolver.register(userInput);
 
       expect(result).toEqual({
-        username: savedUser.username,
         role: savedUser.role,
         email: savedUser.email,
         firstName: savedUser.firstName,
@@ -98,7 +95,7 @@ describe('AuthResolver', () => {
   describe('login', () => {
     it('should return JWT token for valid credentials', async () => {
       const loginInput = {
-        username: 'testuser',
+        email: 'testuser@test.com',
         password: 'password123'
       };
 
@@ -106,7 +103,7 @@ describe('AuthResolver', () => {
 
       jest.spyOn(service, 'login').mockResolvedValue(token);
 
-      const result = await resolver.login(loginInput.username, loginInput.password);
+      const result = await resolver.login(loginInput.email, loginInput.password);
       expect(result).toBe(token);
     });
   });
@@ -114,14 +111,13 @@ describe('AuthResolver', () => {
   describe('me', () => {
     it('should return current user info', async () => {
       const user = {
-        username: 'testuser',
         role: UserRole.USER,
         email: 'test@test.com',
         firstName: 'Test',
         lastName: 'User'
       };
 
-      jest.spyOn(service, 'findUserByUsername').mockResolvedValue(user as User);
+      jest.spyOn(service, 'findUserByEmail').mockResolvedValue(user as User);
 
       const result = await resolver.me(user as User);
 

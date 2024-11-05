@@ -22,7 +22,7 @@ describe('JwtAuthGuard', () => {
 
   describe('getRequest', () => {
     it('should return request from GraphQL context', () => {
-      const mockRequest = { user: { username: 'test' } };
+      const mockRequest = { user: { email: 'test@test.com' } };
       const mockContext = {
         getContext: () => ({ req: mockRequest }),
       };
