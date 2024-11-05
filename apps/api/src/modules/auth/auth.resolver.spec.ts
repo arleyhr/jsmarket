@@ -17,7 +17,7 @@ describe('AuthResolver', () => {
   const mockUserRepository = {
     create: jest.fn(),
     save: jest.fn(),
-    findOne: jest.fn()
+    findOne: jest.fn(),
   };
 
   const mockJwtService = {
@@ -67,20 +67,30 @@ describe('AuthResolver', () => {
     it('should create a new user successfully', async () => {
       const userInput = {
         username: 'testuser',
-        password: 'password123'
+        password: 'password123',
+        email: 'test@test.com',
+        firstName: 'Test',
+        lastName: 'User'
       };
 
       const savedUser = {
         username: userInput.username,
-        role: UserRole.USER
+        role: UserRole.USER,
+        email: 'test@test.com',
+        firstName: 'Test',
+        lastName: 'User'
       };
 
       jest.spyOn(service, 'createUser').mockResolvedValue(savedUser as User);
 
       const result = await resolver.register(userInput);
+
       expect(result).toEqual({
         username: savedUser.username,
-        role: savedUser.role
+        role: savedUser.role,
+        email: savedUser.email,
+        firstName: savedUser.firstName,
+        lastName: savedUser.lastName
       });
     });
   });
@@ -105,10 +115,16 @@ describe('AuthResolver', () => {
     it('should return current user info', async () => {
       const user = {
         username: 'testuser',
-        role: UserRole.USER
+        role: UserRole.USER,
+        email: 'test@test.com',
+        firstName: 'Test',
+        lastName: 'User'
       };
 
-      const result = await resolver.me(user);
+      jest.spyOn(service, 'findUserByUsername').mockResolvedValue(user as User);
+
+      const result = await resolver.me(user as User);
+
       expect(result).toEqual(user);
     });
   });

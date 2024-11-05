@@ -31,6 +31,10 @@ export class AuthService {
     }
   }
 
+  async findUserByUsername(username: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
   async validateUser(username: string, password: string): Promise<User | null> {
     const user = await this.userRepository.findOne({ where: { username } });
 

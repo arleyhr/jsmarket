@@ -4,17 +4,14 @@ import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
 
 import { DatabaseTestingModule } from '../../test-utils/database.module';
 
 import { AuthService } from './auth.service';
 import { User, UserRole } from './entities/user.entity';
+
 describe('AuthService', () => {
   let service: AuthService;
-  let userRepository: Repository<User>;
-  let jwtService: JwtService;
-  let configService: ConfigService;
 
   const mockUserRepository = {
     create: jest.fn(),
@@ -57,9 +54,6 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
-    jwtService = module.get<JwtService>(JwtService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined', () => {
