@@ -16,7 +16,6 @@ describe('OrdersResolver', () => {
     role: UserRole.USER,
     password: 'password',
     hashPassword: jest.fn(),
-    username: 'testuser',
     firstName: 'Test',
     lastName: 'User',
     createdAt: new Date(),
