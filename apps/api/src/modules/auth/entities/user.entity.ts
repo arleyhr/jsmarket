@@ -73,3 +73,12 @@ export class AuthUser {
   @Field()
   role: UserRole;
 }
+
+@ObjectType('AuthResponse')
+export class AuthResponse {
+  @Field()
+  token: string;
+
+  @Field(() => User)
+  user: User;
+}

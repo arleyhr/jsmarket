@@ -8,7 +8,7 @@ import { DatabaseTestingModule } from '../../test-utils/database.module';
 
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
-import { User, UserRole } from './entities/user.entity';
+import { AuthResponse, User, UserRole } from './entities/user.entity';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -63,7 +63,7 @@ describe('AuthResolver', () => {
     expect(resolver).toBeDefined();
   });
 
-  describe('signup', () => {
+  describe('register', () => {
     it('should create a new user successfully', async () => {
       const userInput = {
         email: 'test@test.com',
@@ -73,53 +73,73 @@ describe('AuthResolver', () => {
       };
 
       const savedUser = {
-        role: UserRole.USER,
-        email: 'test@test.com',
-        firstName: 'Test',
-        lastName: 'User'
+        token: 'token',
+        user: {
+          id: 1,
+          role: UserRole.USER,
+          email: 'test@test.com',
+          firstName: 'Test',
+          lastName: 'User',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
       };
 
-      jest.spyOn(service, 'createUser').mockResolvedValue(savedUser as User);
+      jest.spyOn(service, 'createUser').mockResolvedValue(savedUser as AuthResponse);
 
       const result = await resolver.register(userInput);
 
-      expect(result).toEqual({
-        role: savedUser.role,
-        email: savedUser.email,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName
-      });
+      expect(result).toEqual(savedUser);
     });
   });
 
   describe('login', () => {
-    it('should return JWT token for valid credentials', async () => {
+    it('should return auth response for valid credentials', async () => {
       const loginInput = {
         email: 'testuser@test.com',
         password: 'password123'
       };
 
-      const token = 'jwt-token';
+      const authResponse = {
+        token: 'jwt-token',
+        user: {
+          id: 1,
+          role: UserRole.USER,
+          email: 'testuser@test.com',
+          firstName: 'Test',
+          lastName: 'User',
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }
+      };
 
-      jest.spyOn(service, 'login').mockResolvedValue(token);
+      jest.spyOn(service, 'login').mockResolvedValue(authResponse as AuthResponse);
 
       const result = await resolver.login(loginInput.email, loginInput.password);
-      expect(result).toBe(token);
+      expect(result).toEqual(authResponse);
     });
   });
 
   describe('me', () => {
     it('should return current user info', async () => {
+      const authUser = {
+        email: 'test@test.com',
+        role: UserRole.USER
+      };
+
       const user = {
+        id: 1,
         role: UserRole.USER,
         email: 'test@test.com',
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
 
       jest.spyOn(service, 'findUserByEmail').mockResolvedValue(user as User);
 
-      const result = await resolver.me(user as User);
+      const result = await resolver.me(authUser);
 
       expect(result).toEqual(user);
     });
