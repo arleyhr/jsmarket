@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import CartButton from '../buttons/cart';
 import CartSidebar from '../cart/cart-sidebar';
@@ -16,6 +17,7 @@ const products = [
 const Header = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -23,7 +25,7 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <Logo />
-            <SearchBar />
+            <SearchBar onSearch={(query, category) => navigate(`/products?query=${query}&category=${category}`)} />
             <div className="flex space-x-6 justify-end">
               <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} />
               <CartButton
