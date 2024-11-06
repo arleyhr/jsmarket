@@ -69,13 +69,19 @@ describe('AuthService', () => {
       };
 
       const savedUser = { ...userData, id: 1 };
+      const token = 'jwt-token';
 
       mockUserRepository.create.mockReturnValue(userData);
       mockUserRepository.save.mockResolvedValue(savedUser);
+      mockJwtService.sign.mockReturnValue(token);
+      mockConfigService.get.mockReturnValue('test-secret');
 
       const result = await service.createUser(userData);
 
-      expect(result).toEqual(savedUser);
+      expect(result).toEqual({
+        token,
+        user: savedUser
+      });
       expect(mockUserRepository.create).toHaveBeenCalledWith(userData);
       expect(mockUserRepository.save).toHaveBeenCalledWith(userData);
     });
@@ -143,7 +149,10 @@ describe('AuthService', () => {
       mockConfigService.get.mockReturnValue(secret);
 
       const result = await service.login('testuser@test.com', 'password123');
-      expect(result).toBe(token);
+      expect(result).toEqual({
+        token,
+        user
+      });
       expect(mockJwtService.sign).toHaveBeenCalledWith(
         { email: user.email, sub: user.id, role: user.role },
         { secret }

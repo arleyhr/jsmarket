@@ -1,44 +1,77 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../../hooks/useAuth';
+import { useCart} from '../../hooks/useCart';
+import { useLoginModal } from '../../hooks/useLoginModal';
 import CartButton from '../buttons/cart';
 import CartSidebar from '../cart/cart-sidebar';
 import Logo from '../logo';
 import SearchBar from '../search-bar';
 import UserMenu from '../user-menu';
 
-const products = [
-  { id: '1', name: 'Product 1', price: 10, quantity: 1, image: 'https://placehold.co/600x400.png' },
-  { id: '2', name: 'Product 2', price: 20, quantity: 2, image: 'https://placehold.co/600x400.png' },
-  { id: '3', name: 'Product 3', price: 30, quantity: 3, image: 'https://placehold.co/600x400.png' },
-  { id: '4', name: 'Product 4', price: 40, quantity: 4, image: 'https://placehold.co/600x400.png' },
-];
 
 const Header = () => {
+  const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const navigate = useNavigate();
+  const { isAuthenticated, logout, user } = useAuth();
+  const { openModal } = useLoginModal();
+  const { cart, loading } = useCart();
+
+  const prevAuthActions = (action: () => void) => {
+    if (!isAuthenticated) {
+      openModal();
+      return;
+    }
+    action();
+  };
+
+  const cartCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <>
       <header className="w-full bg-zinc-900 text-white">
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
-            <Logo />
-            <SearchBar onSearch={(query, category) => navigate(`/products?query=${query}&category=${category}`)} />
+            <Link to="/">
+              <Logo />
+            </Link>
+            <SearchBar
+              onSearch={(query, category) => {
+                navigate({
+                  pathname: '/products',
+                  search: `?${new URLSearchParams({
+                    query: query || '',
+                    category: category || '',
+                  })}`,
+                });
+              }}
+            />
             <div className="flex space-x-6 justify-end">
-              <UserMenu showUserMenu={showUserMenu} setShowUserMenu={setShowUserMenu} />
+              {isAuthenticated && user?.firstName && (
+                <span className="text-sm font-medium">
+                  {user.firstName}
+                </span>
+              )}
+              <UserMenu
+                showUserMenu={showUserMenu}
+                setShowUserMenu={value => {
+                  prevAuthActions(() => setShowUserMenu(value));
+                }}
+                logout={logout}
+              />
               <CartButton
-                count={3}
+                count={cartCount}
                 onClick={() => {
-                  setIsCartOpen(prev => !prev);
+                  prevAuthActions(() => setIsCartOpen(prev => !prev));
                 }}
               />
             </div>
           </div>
         </div>
       </header>
-      {isCartOpen && <CartSidebar products={products} />}
+      {isCartOpen && <CartSidebar isLoading={loading} products={cart.items} />}
     </>
   );
 };

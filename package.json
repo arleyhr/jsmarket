@@ -17,11 +17,16 @@
     "lint": "nx run-many -t lint -p api web --parallel",
     "test": "nx run-many -t test -p api web --parallel",
     "build:dev": "nx run-many -t build -p api web --configuration=development",
-    "build:prod": "nx run-many -t build -p api web --configuration=production"
+    "build:prod": "nx run-many -t build -p api web --configuration=production",
+    "build:all": "nx run-many -t build --all --parallel",
+    "start:api": "node dist/apps/api/main.js",
+    "start:web": "node dist/apps/web/server/main.js"
   },
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.11.8",
     "@apollo/server": "^4.11.2",
+    "@hookform/resolvers": "^3.9.1",
     "@nestjs/apollo": "^12.2.1",
     "@nestjs/common": "^10.0.2",
     "@nestjs/config": "^3.3.0",
@@ -44,13 +49,15 @@
     "passport-local": "^1.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-hook-form": "^7.53.1",
     "react-router-dom": "6.11.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

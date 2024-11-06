@@ -46,7 +46,7 @@ export class Review {
   comment: string;
 
   @Field()
-  date: Date;
+  date: string;
 
   @Field()
   reviewerName: string;

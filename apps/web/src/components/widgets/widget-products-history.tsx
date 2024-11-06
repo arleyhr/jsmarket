@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
+import { TProduct } from '../../queries/products';
 import LineButton from '../buttons/line';
 import WidgetCard from '../cards/widget';
 
-import WidgetProductsHistoryItem, { Product } from './widget-products-history-item';
+import WidgetProductsHistoryItem from './widget-products-history-item';
 
 const EmptyProducts = () => (
   <div className="text-center py-8">
@@ -15,10 +16,11 @@ const EmptyProducts = () => (
 );
 
 type WidgetProductsHistoryProps = {
-  products: Product[];
+  products: TProduct[];
+  onAddToCart: (productId: number) => void;
 };
 
-const WidgetProductsHistory = ({ products }: WidgetProductsHistoryProps) => {
+const WidgetProductsHistory = ({ products, onAddToCart }: WidgetProductsHistoryProps) => {
   const [viewAll, setViewAll] = useState(false);
 
   const productsToShow = viewAll ? products : products.slice(0, 3);
@@ -32,7 +34,14 @@ const WidgetProductsHistory = ({ products }: WidgetProductsHistoryProps) => {
       emptyComponent={<EmptyProducts />}
     >
       {productsToShow.map(product => (
-        <WidgetProductsHistoryItem key={product.id} product={product} />
+        <WidgetProductsHistoryItem
+          key={product.id}
+          productId={product.id}
+          image={product.images[0]}
+          name={product.title}
+          price={product.price}
+          onAddToCart={() => onAddToCart(product.id)}
+        />
       ))}
     </WidgetCard>
   );

@@ -14,10 +14,13 @@ export class ProductsService {
     search = '',
     category = ''
   ): Promise<Products> {
-    const query = `page=${page}&limit=${perPage}&sortBy=${sortBy}&order=${order}&search=${search}`;
-    const url = category.length
-      ? `${this.baseUrl}/products/category/${category}?${query}`
-      : `${this.baseUrl}/products?${query}`;
+    const query = `page=${page}&limit=${perPage}&sortBy=${sortBy}&order=${order}`;
+    const url = search?.length
+      ? `${this.baseUrl}/products/search?q=${search}&${query}`
+      : category?.length
+        ? `${this.baseUrl}/products/category/${category}?${query}`
+        : `${this.baseUrl}/products?${query}`;
+
     const response = await fetch(url);
     const result = await response.json();
 

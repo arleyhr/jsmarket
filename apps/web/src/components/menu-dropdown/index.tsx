@@ -1,6 +1,7 @@
 type MenuItem = {
   label: string;
   value: string;
+  disabled?: boolean;
 };
 
 type MenuDropdownProps = {
@@ -21,8 +22,12 @@ const MenuDropdown = ({
         <a
           key={index}
           href="#"
-          className="block px-4 py-2 hover:bg-gray-100"
-          onClick={() => onItemClick && onItemClick(item.value)}
+          className={`block px-4 py-2 ${
+            item.disabled
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'hover:bg-gray-100 cursor-pointer'
+          }`}
+          onClick={() => !item.disabled && onItemClick && onItemClick(item.value)}
         >
           {item.label}
         </a>

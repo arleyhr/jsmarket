@@ -1,24 +1,18 @@
+import { TCartItem } from '../../queries/cart';
 import LineButton from '../buttons/line';
 import CartTotal from '../cart/cart-total';
 
 import ProductCard from './cart-side-product';
 
 
-export type CartProduct = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-};
-
 type CartSidebarProps = {
-  products: CartProduct[];
-  onRemoveProduct?: (id: string) => void;
-  onUpdateQuantity?: (id: string, quantity: number) => void;
+  isLoading: boolean;
+  products: TCartItem[];
+  onRemoveProduct?: (id: number) => void;
+  onUpdateQuantity?: (id: number, quantity: number) => void;
 };
 
-const CartSidebar = ({ products = [], onRemoveProduct, onUpdateQuantity }: CartSidebarProps) => {
+const CartSidebar = ({ isLoading, products = [], onRemoveProduct, onUpdateQuantity }: CartSidebarProps) => {
   const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0);
 
   return (
@@ -33,16 +27,25 @@ const CartSidebar = ({ products = [], onRemoveProduct, onUpdateQuantity }: CartS
         />
       </div>
       <div className="overflow-y-auto h-[calc(100%-180px)]">
-        {products.map((product, index) => (
-          <div key={product.id}>
-            <ProductCard
-              product={product}
-              onRemove={() => onRemoveProduct?.(product.id)}
-              onQuantityChange={quantity => onUpdateQuantity?.(product.id, quantity)}
-            />
-            {index < products.length - 1 && <hr className="w-full border-gray-200 my-2" />}
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
           </div>
-        ))}
+        ) : (
+          products.map((product, index) => (
+            <div key={product.id}>
+              <ProductCard
+                image={product.productImage}
+                name={product.productName}
+                price={product.price}
+                quantity={product.quantity}
+                onRemove={() => onRemoveProduct?.(product.id)}
+                onQuantityChange={quantity => onUpdateQuantity?.(product.id, quantity)}
+              />
+              {index < products.length - 1 && <hr className="w-full border-gray-200 my-2" />}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { Mutation, Args, Resolver, Query } from '@nestjs/graphql';
 import { CurrentUser } from '../../decorators/get-user.decorator';
 
 import { AuthService } from './auth.service';
-import { AuthUser, CreateUserInput, User } from './entities/user.entity';
+import { AuthResponse, AuthUser, CreateUserInput, User } from './entities/user.entity';
 import { JwtAuthGuard } from './jwt.guard';
 
 @Resolver(() => User)
@@ -19,13 +19,13 @@ export class AuthResolver {
     return result;
   }
 
-  @Mutation(() => User, { name: 'register' })
-  async register(@Args('user') user: CreateUserInput): Promise<User> {
+  @Mutation(() => AuthResponse, { name: 'register' })
+  async register(@Args('user') user: CreateUserInput): Promise<AuthResponse> {
     return this.authService.createUser(user);
   }
 
-  @Mutation(() => String, { name: 'login' })
-  async login(@Args('email') email: string, @Args('password') password: string): Promise<string> {
+  @Mutation(() => AuthResponse, { name: 'login' })
+  async login(@Args('email') email: string, @Args('password') password: string): Promise<AuthResponse> {
     return this.authService.login(email, password);
   }
 }

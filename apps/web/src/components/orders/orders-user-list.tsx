@@ -39,7 +39,6 @@ export default function OrderList({ orders }: OrderListProps) {
           updatedAt={order.updatedAt}
           total={order.total}
           items={order.items}
-          statusColor={statusColors[order.status as keyof typeof statusColors]}
           isExpanded={expandedOrder === order.id.toString()}
           onToggle={toggleOrderDetails}
         />

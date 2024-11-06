@@ -1,14 +1,9 @@
+import { TProduct } from "../../queries/products";
+
 import Rating from "./rating";
 
-export interface Review {
-  rating: number;
-  reviewerName: string;
-  date: string;
-  comment: string;
-}
-
 interface ReviewListProps {
-  reviews: Review[];
+  reviews: TProduct['reviews'];
 }
 
 export default function ReviewList({ reviews }: ReviewListProps) {

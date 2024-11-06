@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Rating from './rating';
 
@@ -23,8 +23,6 @@ export default function ProductCard({
   category,
   onAddToCart,
 }: ProductCardProps) {
-  const navigate = useNavigate();
-
   return (
     <div className="bg-gray-100 p-0 border border-gray-300 rounded-lg overflow-hidden">
       <div className="relative">
@@ -36,12 +34,11 @@ export default function ProductCard({
         )}
       </div>
       <div className="mt-4 p-2">
-        <h3
-          className="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[3.5rem] cursor-pointer hover:underline"
-          onClick={() => navigate(`/products/${productId}`)}
-        >
-          {title}
-        </h3>
+        <Link to={`/products/${productId}`}>
+          <h3 className="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[3.5rem] cursor-pointer hover:underline">
+            {title}
+          </h3>
+        </Link>
         <div className="flex items-center mt-2">
           <Rating rating={rating} />
           <span className="text-gray-500 text-sm ml-2">({rating})</span>

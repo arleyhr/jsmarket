@@ -1,7 +1,4 @@
-import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Int } from '@nestjs/graphql';
-
-import { JwtAuthGuard } from '../auth/jwt.guard';
 
 import { Product, Products, Category } from './entities/product.entity';
 import { ProductsService } from './products.service';
@@ -11,7 +8,6 @@ export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
   @Query(() => Products, { name: 'products' })
-  @UseGuards(JwtAuthGuard)
   async findAll(
     @Args('page', { type: () => Int }) page: number,
     @Args('perPage', { type: () => Int }) perPage: number,

@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 
-import { User } from './entities/user.entity';
+import { AuthResponse, User } from './entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -16,12 +16,19 @@ export class AuthService {
     private configService: ConfigService
   ) {}
 
-  async createUser(user: Partial<User>): Promise<User> {
+  async createUser(user: Partial<User>): Promise<AuthResponse> {
     try {
       const newUser = this.userRepository.create(user);
       const result = await this.userRepository.save(newUser);
 
-      return result;
+      const payload = { email: result.email, sub: result.id, role: result.role };
+
+      const token = this.jwtService.sign(payload, { secret: this.configService.get('SECRET_KEY') });
+
+      return {
+        token,
+        user: result,
+      };
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         throw new Error('Email already exists');
@@ -47,7 +54,7 @@ export class AuthService {
     return null;
   }
 
-  async login(email: string, password: string): Promise<string> {
+  async login(email: string, password: string): Promise<AuthResponse> {
     try {
       const user = await this.validateUser(email, password);
 
@@ -59,7 +66,10 @@ export class AuthService {
 
       const token = this.jwtService.sign(payload, { secret: this.configService.get('SECRET_KEY') });
 
-      return token;
+      return {
+        token,
+        user,
+      };
     } catch (e) {
       throw new UnauthorizedException();
     }
