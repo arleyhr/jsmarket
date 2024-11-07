@@ -28,6 +28,15 @@
           "buildTarget": "api:build:production"
         }
       }
+    },
+    "seed": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "api:build",
+        "watch": false,
+        "entry": "apps/api/src/scripts/seed.ts"
+      }
     }
   }
 }

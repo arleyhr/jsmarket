@@ -16,6 +16,10 @@ export class AuthService {
     private configService: ConfigService
   ) {}
 
+  async findAllUsers(): Promise<User[]> {
+    return this.userRepository.find({ take: 10 });
+  }
+
   async createUser(user: Partial<User>): Promise<AuthResponse> {
     try {
       const newUser = this.userRepository.create(user);
