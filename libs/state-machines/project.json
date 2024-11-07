@@ -1,0 +1,19 @@
+{
+  "name": "state-machines",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/state-machines/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/state-machines",
+        "main": "libs/state-machines/src/index.ts",
+        "tsConfig": "libs/state-machines/tsconfig.lib.json",
+        "assets": ["libs/state-machines/*.md"]
+      }
+    }
+  }
+}
