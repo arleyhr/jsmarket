@@ -1,3 +1,4 @@
+import { OrderEvents, OrderStatus } from '@jsmarket/state-machines';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -8,7 +9,6 @@ import { CartItem } from '../carts/entities/cart-item.entity';
 import { Cart } from '../carts/entities/cart.entity';
 
 import { Order, OrderItem, OrderStatusHistory } from './entities/order.entity';
-import { OrderEvents, OrderStatus } from './order.machine';
 import { OrdersService } from './orders.service';
 
 describe('OrdersService', () => {
@@ -33,6 +33,7 @@ describe('OrdersService', () => {
 
   const mockOrder: Order = {
     id: 1,
+    userId: mockUser.id,
     user: mockUser,
     total: 100,
     status: OrderStatus.Pending,
@@ -54,6 +55,7 @@ describe('OrdersService', () => {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    find: jest.fn(),
   };
 
   const mockOrderItemRepository = {
@@ -125,6 +127,7 @@ describe('OrdersService', () => {
     it('should return an order for regular user', async () => {
       const mockOrder = {
         id: 1,
+        userId: 1,
         user: {
           id: 1,
           email: 'test@test.com',
@@ -137,7 +140,7 @@ describe('OrdersService', () => {
           updatedAt: new Date()
         },
         items: [],
-        status: 'pending',
+        status: OrderStatus.Pending,
         total: 100,
         shippingAddress: '123 Test St',
         billingAddress: '123 Test St',
@@ -157,6 +160,7 @@ describe('OrdersService', () => {
 
       await expect(service.getOrder(1, mockUser)).rejects.toThrow('Order not found');
     });
+
     it('should return order status logs', async () => {
       const mockOrderStatusHistory = {
         id: 1,
@@ -170,7 +174,7 @@ describe('OrdersService', () => {
 
       mockOrderStatusHistoryRepository.find.mockResolvedValue([mockOrderStatusHistory]);
       const result = await service.getOrdersStatusLogs();
-      expect(result).toEqual([{ ...mockOrderStatusHistory, order: mockOrder }]);
+      expect(result).toEqual([mockOrderStatusHistory]);
     });
   });
 
@@ -227,6 +231,98 @@ describe('OrdersService', () => {
       await expect(
         service.processOrderStatusUpdate(1, mockUser, OrderEvents.deliver)
       ).rejects.toThrow('Order status update error: Update failed');
+    });
+  });
+
+  describe('getOrders', () => {
+    it('should return orders for regular user', async () => {
+      const mockOrders = [mockOrder];
+      mockOrderRepository.find.mockResolvedValue(mockOrders);
+
+      const result = await service.getOrders(mockUser);
+      expect(result).toEqual(mockOrders);
+    });
+
+    it('should return all orders for admin user', async () => {
+      const adminUser = {
+        ...mockUser,
+        role: UserRole.ADMIN,
+        hashPassword: jest.fn()
+      };
+      const mockOrders = [mockOrder];
+      mockOrderRepository.find.mockResolvedValue(mockOrders);
+
+      const result = await service.getOrders(adminUser, true);
+      expect(result).toEqual(mockOrders);
+    });
+
+    it('should filter orders by status', async () => {
+      const mockOrders = [mockOrder];
+      mockOrderRepository.find.mockResolvedValue(mockOrders);
+
+      const result = await service.getOrders(mockUser, false, OrderStatus.Pending);
+      expect(result).toEqual(mockOrders);
+    });
+  });
+
+  describe('changeOrderStatus', () => {
+    it('should change order status successfully', async () => {
+      const mockStatusHistory = {
+        status: OrderStatus.StartPreparation,
+        previousStatus: OrderStatus.Pending,
+        comment: 'Test comment',
+        createdAt: new Date()
+      };
+
+      const updatedOrder = {
+        ...mockOrder,
+        status: OrderStatus.StartPreparation,
+        statusHistory: [mockStatusHistory]
+      };
+      jest.spyOn(service, 'getOrder')
+        .mockResolvedValueOnce({
+          ...mockOrder,
+          statusHistory: [{
+            id: 1,
+            order: mockOrder,
+            orderId: mockOrder.id,
+            status: OrderStatus.Pending,
+            previousStatus: null,
+            comment: '',
+            createdAt: new Date()
+          }]
+        })
+        .mockResolvedValueOnce({
+          ...mockOrder,
+          status: OrderStatus.StartPreparation,
+          statusHistory: [{
+            id: 1,
+            order: mockOrder,
+            orderId: mockOrder.id,
+            status: OrderStatus.StartPreparation,
+            previousStatus: OrderStatus.Pending,
+            comment: 'Test comment',
+            createdAt: new Date()
+          }]
+        });
+
+      mockOrderStatusHistoryRepository.create.mockReturnValue({
+        id: 1,
+        order: mockOrder,
+        orderId: mockOrder.id,
+        ...mockStatusHistory
+      });
+      mockOrderRepository.save.mockResolvedValue(updatedOrder);
+      const result = await service.changeOrderStatus(1, OrderEvents.startPreparation, { ...mockUser, role: UserRole.ADMIN } as any, 'Test comment');
+      expect(result).toMatchObject(updatedOrder);
+    });
+
+    it('should throw error if order not found', async () => {
+      jest.spyOn(service, 'getOrder').mockResolvedValue(null);
+
+      await expect(
+        service.changeOrderStatus(1, OrderEvents.startPreparation, mockUser)
+      ).rejects.toThrow('Order not found');
     });
   });
 });

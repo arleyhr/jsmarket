@@ -1,22 +1,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { useLogin, useRegister } from '../../hooks/useAuth';
+
 interface LoginModalProps {
   onClose: () => void;
-  onLogin: (email: string, password: string) => Promise<void>;
-  onRegister: (data: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-  }) => Promise<void>;
 }
 
-export default function LoginModal({ onClose, onLogin, onRegister }: LoginModalProps) {
+export default function LoginModal({ onClose, }: LoginModalProps) {
   const [isLogin, setIsLogin] = useState(true);
+  const { login: handleLogin, loading: loginLoading } = useLogin();
+  const { register: handleRegister, loading: registerLoading } = useRegister();
   const [error, setError] = useState('');
+
+  const loading = loginLoading || registerLoading;
 
   const loginSchema = z.object({
     email: z.string().email('Invalid email'),
@@ -46,11 +46,11 @@ export default function LoginModal({ onClose, onLogin, onRegister }: LoginModalP
   const onSubmit = async (data: z.infer<typeof loginSchema | typeof registerSchema>) => {
     try {
       if (isLogin) {
-        await onLogin(data.email, data.password);
+        await handleLogin(data.email, data.password);
         onClose();
       } else {
         if ('firstName' in data && 'lastName' in data) {
-          await onRegister({
+          await handleRegister({
             email: data.email,
             password: data.password,
             firstName: data.firstName,
@@ -77,9 +77,7 @@ export default function LoginModal({ onClose, onLogin, onRegister }: LoginModalP
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <IconX size={24} />
         </button>
 
         <h2 className="text-2xl font-bold mb-6 text-center">
@@ -161,6 +159,7 @@ export default function LoginModal({ onClose, onLogin, onRegister }: LoginModalP
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-amber-300 text-black py-2 px-4 rounded-md hover:bg-amber-400 transition-colors"
           >
             {isLogin ? 'Sign in' : 'Create account'}

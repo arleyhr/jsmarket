@@ -7,10 +7,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { User } from './entities/user.entity';
+import { AdminGuard } from './jwt.guard';
 import { JwtStrategy } from './jwt.strategy';
+
 @Module({
   imports: [PassportModule, JwtModule, ConfigModule, TypeOrmModule.forFeature([User])],
-  providers: [AuthResolver, AuthService, JwtStrategy],
+  providers: [AuthResolver, AuthService, JwtStrategy, AdminGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

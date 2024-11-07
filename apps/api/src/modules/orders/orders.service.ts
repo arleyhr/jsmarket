@@ -1,3 +1,4 @@
+import { OrderEvents, OrderStatus, getNextOrderStatus } from '@jsmarket/state-machines';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -10,7 +11,6 @@ import {
   OrderStatusHistory,
   OrderItem,
 } from './entities/order.entity';
-import { getNextOrderStatus, OrderEvents, OrderStatus } from './order.machine';
 
 
 @Injectable()
@@ -52,7 +52,7 @@ export class OrdersService {
       }
 
       const order = this.orderRepository.create({
-        user: { id: userId },
+        userId: user.id,
         total: cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0),
         status: OrderStatus.Pending,
       });
@@ -129,7 +129,7 @@ export class OrdersService {
       throw new Error('Order not found');
     }
 
-    const nextStatus = getNextOrderStatus(order, event, user);
+    const nextStatus = getNextOrderStatus(order.status as OrderStatus, event, user.role, order.total);
 
     order.status = nextStatus;
 
@@ -150,12 +150,31 @@ export class OrdersService {
     return result;
   }
 
-  async getOrdersStatusLogs() {
-    const logs = await this.orderStatusHistoryRepository.find({
+  async getOrders(user: User, admin?: boolean, status?: OrderStatus) {
+    const isAdmin = user.role === UserRole.ADMIN && admin;
+
+    const where = { ...(isAdmin ? {} : { user: { id: user.id } }), status };
+
+    const orders = await this.orderRepository.find({
+      where,
+      relations: ['items', 'statusHistory', 'user'],
       order: {
         createdAt: 'DESC',
       },
-      relations: ['order'],
+    });
+
+    return orders;
+  }
+
+  async getOrdersStatusLogs(orderId?: number) {
+    const where = orderId ? { order: { id: orderId } } : {};
+
+    const logs = await this.orderStatusHistoryRepository.find({
+      where,
+      order: {
+        createdAt: 'DESC',
+      },
+      relations: [],
     });
 
     return logs;

@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 
+import { useAddToCart } from '../../hooks/useCart';
+
 import Rating from './rating';
 
 type ProductCardProps = {
@@ -10,7 +12,6 @@ type ProductCardProps = {
   discountPercentage: number;
   rating: number;
   category: string;
-  onAddToCart?: (id: number) => void;
 };
 
 export default function ProductCard({
@@ -21,8 +22,9 @@ export default function ProductCard({
   discountPercentage,
   rating,
   category,
-  onAddToCart,
 }: ProductCardProps) {
+  const { addToCart, loading } = useAddToCart();
+
   return (
     <div className="bg-gray-100 p-0 border border-gray-300 rounded-lg overflow-hidden">
       <div className="relative">
@@ -55,10 +57,13 @@ export default function ProductCard({
       </div>
       <div className="p-2">
         <button
-          className="w-full mt-4 bg-amber-300 hover:bg-amber-400 text-black py-2 rounded-lg"
-          onClick={() => onAddToCart?.(productId)}
+          disabled={loading}
+          className={`w-full mt-4 py-2 rounded-lg text-black ${
+            loading ? 'bg-amber-200 cursor-not-allowed' : 'bg-amber-300 hover:bg-amber-400'
+          }`}
+          onClick={() => addToCart(productId)}
         >
-          Add to cart
+          {loading ? ' Adding...' : 'Add to cart'}
         </button>
       </div>
     </div>

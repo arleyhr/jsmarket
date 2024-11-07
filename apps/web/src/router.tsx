@@ -1,6 +1,7 @@
 import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from "react-router-dom";
 
 import Layout from "./components/layout";
+import CartPage from "./pages/cart";
 import HomePage from "./pages/home";
 import OrdersPage from "./pages/orders";
 import OrdersAdmin from "./pages/orders-admin";
@@ -15,6 +16,7 @@ const router = createBrowserRouter(
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route path="/orders" element={<OrdersPage />} />
       <Route path="/orders-admin" element={<OrdersAdmin />} />
+      <Route path="/cart" element={<CartPage />} />
     </Route>
   )
 );

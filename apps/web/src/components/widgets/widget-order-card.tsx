@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 import LineButton from '../buttons/line';
 import WidgetCard from '../cards/widget';
 
@@ -17,11 +19,13 @@ type WidgetOrderCardProps = {
 };
 
 const WidgetOrderCard = ({ orders }: WidgetOrderCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <WidgetCard
       title="Your recent orders"
       viewAllButton
-      onViewAllClick={() => console.log('View all clicked')}
+      onViewAllClick={() => navigate('/orders')}
       isEmpty={orders.length === 0}
       emptyComponent={<EmptyOrders />}
     >

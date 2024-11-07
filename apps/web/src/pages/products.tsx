@@ -4,7 +4,7 @@ import FiltersSidebar from '../components/filters/filters-sidebar';
 import ProductCard from '../components/products/product-card';
 import ProductsListSkeleton from '../components/products/products-list-skeleton';
 import SortDropdown from '../components/products/sort-dropdown';
-import { sortOptions, useProductsQuery } from '../hooks/useProductsQuery';
+import { sortOptions, useProducts } from '../hooks/useProducts';
 
 function EmptyState() {
   return (
@@ -29,7 +29,7 @@ export default function ProductsPage() {
     error,
     handleCategoryChange,
     handleFilterChange,
-  } = useProductsQuery();
+  } = useProducts();
 
   if (error) {
     return <div>Error: {error.message}</div>;

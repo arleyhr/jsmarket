@@ -1,7 +1,5 @@
 import { gql } from "@apollo/client";
 
-import { TUser } from "./user";
-
 const DEFAULT_CART_FIELDS = `
   total
   items {
@@ -11,6 +9,8 @@ const DEFAULT_CART_FIELDS = `
     productImage
     productName
     quantity
+    createdAt
+    updatedAt
   }
 `;
 
@@ -40,7 +40,7 @@ const REMOVE_PRODUCT_FROM_CART = gql`
 
 const UPDATE_CART_ITEM_QUANTITY = gql`
   mutation UpdateCartItemQuantity($productId: Float!, $action: String!, $quantity: Float!) {
-    updateCartItemQuantity(productId: $productId, action: $action, quantity: $quantity) {
+    updateItemQuantity(productId: $productId, action: $action, quantity: $quantity) {
       ${DEFAULT_CART_FIELDS}
     }
   }
@@ -50,72 +50,11 @@ const CHECKOUT_CART = gql`
   mutation CheckoutCart {
     createOrder {
       id
-      user
       status
       total
-      shippingAddress
-      billingAddress
-      items {
-        id
-        orderId
-        productId
-        productName
-        productImage
-        price
-        quantity
-        subtotal
-        createdAt
-        updatedAt
-      }
-      statusHistory {
-        id
-        orderId
-        status
-        previousStatus
-        comment
-        createdAt
-      }
-      createdAt
-      updatedAt
     }
   }
 `;
-
-export type TOrderItem = {
-  id: number;
-  order: TOrder;
-  orderId: number;
-  productId: number;
-  productName: string;
-  productImage: string;
-  price: number;
-  quantity: number;
-  subtotal: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type TOrderStatusHistory = {
-  id: number;
-  orderId: number;
-  status: string;
-  previousStatus: string;
-  comment: string;
-  createdAt: string;
-};
-
-export type TOrder = {
-  id: number;
-  user: TUser;
-  status: string;
-  total: number;
-  shippingAddress: string;
-  billingAddress: string;
-  items: TOrderItem[];
-  statusHistory: TOrderStatusHistory[];
-  createdAt: string;
-  updatedAt: string;
-};
 
 export type TCartItem = {
   id: number;
@@ -124,6 +63,8 @@ export type TCartItem = {
   productImage: string;
   productName: string;
   quantity: number;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type TCart = {

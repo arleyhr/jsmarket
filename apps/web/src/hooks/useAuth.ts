@@ -1,29 +1,53 @@
 import { useQuery, useMutation } from '@apollo/client';
 
+import client from '../apollo';
 import { GET_CURRENT_USER, LOGIN_MUTATION, REGISTER_MUTATION } from '../queries/user';
 
 export const useAuth = () => {
   const { data: userData, loading: userLoading } = useQuery(GET_CURRENT_USER);
 
-  const [login] = useMutation(LOGIN_MUTATION);
-  const [register] = useMutation(REGISTER_MUTATION);
+  const logout = () => {
+    localStorage.removeItem('token');
+    client.resetStore();
+    window.location.reload();
+  };
+
+  return {
+    user: userData?.me,
+    isLoading: userLoading,
+    isAuthenticated: !!userData?.me,
+    logout
+  };
+};
+
+export const useLogin = () => {
+  const [login, { loading, error }] = useMutation(LOGIN_MUTATION);
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      const { data } = await login({
+      const result = await login({
         variables: { email, password }
       });
 
-      const newToken = data.login.token;
+      const newToken = result.data?.login?.token;
 
-      localStorage.setItem('token', newToken);
+      if (newToken) {
+        localStorage.setItem('token', newToken);
+      }
 
       window.location.reload();
-      return data.login.user;
+
+      return result;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Error logging in');
     }
   };
+
+  return { login: handleLogin, loading, error };
+}
+
+export const useRegister = () => {
+  const [register, { loading, error }] = useMutation(REGISTER_MUTATION);
 
   const handleRegister = async (user: {
     email: string;
@@ -32,31 +56,23 @@ export const useAuth = () => {
     lastName: string;
   }) => {
     try {
-      const { data } = await register({
+      const result = await register({
         variables: { user }
       });
 
-      const newToken = data.register.token;
+      const newToken = result.data?.register?.token;
 
-      localStorage.setItem('token', newToken);
+      if (newToken) {
+        localStorage.setItem('token', newToken);
+      }
 
       window.location.reload();
+
+      return result;
     } catch (error) {
       throw new Error(error instanceof Error ? error.message : 'Error registering user');
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    window.location.reload();
-  };
-
-  return {
-    user: userData?.me,
-    isLoading: userLoading,
-    isAuthenticated: !!userData?.me,
-    login: handleLogin,
-    register: handleRegister,
-    logout
-  };
-};
+  return { register: handleRegister, loading, error };
+}
