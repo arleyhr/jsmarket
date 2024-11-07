@@ -1,7 +1,7 @@
 import WidgetOrderCard from "../components/widgets/widget-order-card";
 import { Order } from "../components/widgets/widget-order-item";
 import WidgetProductsHistory from "../components/widgets/widget-products-history";
-import { useCart } from "../hooks/useCart";
+import { useAddToCart } from "../hooks/useCart";
 import { useStorageProductsViewed } from "../hooks/useStorageProductsViewed";
 
 const orders = [
@@ -30,11 +30,12 @@ const orders = [
 
 export default function HomePage() {
   const { viewedProducts } = useStorageProductsViewed();
-  const { addProductToCart } = useCart();
+  const { addToCart } = useAddToCart();
+
   return (
     <div className="mt-8 grid grid-cols-2 gap-4">
       <WidgetOrderCard orders={orders} />
-      <WidgetProductsHistory products={viewedProducts} onAddToCart={addProductToCart} />
+      <WidgetProductsHistory products={viewedProducts} onAddToCart={addToCart} />
     </div>
   );
 }

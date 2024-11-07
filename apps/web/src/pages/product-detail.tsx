@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import AddProductButton from '../components/buttons/add-product';
 import BuyNowButton from '../components/buttons/buy-now';
 import DetailSkeleton from '../components/products/detail-skeleton';
@@ -6,17 +9,28 @@ import LowInStockDetail from '../components/products/low-in-stock-detail';
 import ProductBreadcrumbs from '../components/products/product-breadcrumbs';
 import Rating from '../components/products/rating';
 import ReviewList from '../components/products/review-list';
+import { useAddToCart } from '../hooks/useCart';
 import { useProductDetailsQuery } from '../hooks/useProductDetail';
 
 const LOW_STOCK_THRESHOLD = 5;
 
 export default function ProductDetail() {
   const { product, loading, error } = useProductDetailsQuery();
+  const { addToCart, loading: addToCartLoading } = useAddToCart();
+  const navigate = useNavigate();
+  const [quantity, setQuantity] = useState(1);
 
   if (loading) return <DetailSkeleton />;
   if (error) return <div>Error: {error.message}</div>;
 
   const isLowStock = product.stock <= LOW_STOCK_THRESHOLD;
+
+  const handleCheckout = async () => {
+    await addToCart(product.id, quantity);
+    navigate('/cart');
+  };
+
+  const handleAddToCart = () => addToCart(product.id, quantity);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-3">
@@ -45,9 +59,36 @@ export default function ProductDetail() {
 
           <LowInStockDetail isLowStock={isLowStock} stock={product.stock} />
 
-          <AddProductButton />
+          <div className="flex items-center mt-4">
+            <label htmlFor="quantity" className="mr-2 text-gray-700">
+              Quantity:
+            </label>
+            <select
+              id="quantity"
+              name="quantity"
+              className="border rounded-md p-2"
+              value={quantity}
+              onChange={e => setQuantity(Number(e.target.value))}
+            >
+              {[...Array(10).keys()].map(num => (
+                <option key={num + 1} value={num + 1}>
+                  {num + 1}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <BuyNowButton />
+          <AddProductButton
+            onClick={handleAddToCart}
+            loading={addToCartLoading}
+            disabled={addToCartLoading}
+          />
+
+          <BuyNowButton
+            onClick={handleCheckout}
+            loading={addToCartLoading}
+            disabled={addToCartLoading}
+          />
 
           <div className="mt-6">
             <h2 className="text-xl font-bold mb-2">About this product</h2>

@@ -1,84 +1,70 @@
-# Jsmarket
+![JSMarket](./apps/web/public/logo.png)
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
-
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
-
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
-
-## Finish your CI setup
-
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/S8R9IOWKMW)
-
-
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve web
-```
-
-To create a production bundle:
-
-```sh
-npx nx build web
-```
-
-To see all available targets to run for a project, run:
-
-```sh
-npx nx show project web
-```
-
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
-
-```sh
-npx nx g @nx/react:app demo
-```
-
-To generate a new library, use:
-
-```sh
-npx nx g @nx/react:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+# JSMarket
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![WTFPL](https://img.shields.io/badge/license-WTFPL-brightgreen.svg)](http://www.wtfpl.net/about/)
+
+![React](https://img.shields.io/badge/-React-20232a?logo=react&style=for-the-badge)
+![TailwindCSS](https://img.shields.io/badge/-TailwindCSS-38B2AC?logo=tailwind-css&style=for-the-badge)
+![Graphql](https://img.shields.io/badge/-Graphql-df0397?logo=graphql&style=for-the-badge)
+![Apollo](https://img.shields.io/badge/-Apollo-1572B6?logo=apollo&style=for-the-badge)
+![NodeJS](https://img.shields.io/badge/-Node.js-20232a?logo=node.js&style=for-the-badge)
+![Typescript](https://img.shields.io/badge/-Typescript-1572B6?logo=typescript&style=for-the-badge)
+![NestJS](https://img.shields.io/badge/-NestJS-ea2845?logo=nestjs&style=for-the-badge)
+![Jest](https://img.shields.io/badge/-Jest-C21325?logo=jest&style=for-the-badge)
+![Nx](https://img.shields.io/badge/-Nx-000000?logo=nx&style=for-the-badge)
+
+## Description
+A modern e-commerce web application built with NestJS and React, using an Nx monorepo architecture.
+
+## 🚀 Key Features
+- 🛍️ Product catalog with search and filtering
+- 🛒 Shopping cart
+- 👤 User authentication
+- 📦 Order management with state machine
+- 💳 Checkout process
+- 🎨 Modern UI with Tailwind CSS
+- 🔒 Secure GraphQL API
+
+## 🛠️ Tech Stack
+- **Frontend**: React, Apollo Client, TailwindCSS
+- **Backend**: NestJS, TypeORM, GraphQL
+- **Testing**: Jest
+- **Database**: SQLite
+
+## Local Development
+
+### 📋 Prerequisites
+- Node.js v20 or higher
+- npm v9 or higher
+
+### 🔧 Setup Instructions
+
+1. Clone the repository
+2. Install dependencies
+```bash
+  npm install
+```
+4. Start the development servers
+
+### 🚀 Running the app
+
+```bash
+  npx nx run dev
+```
+
+## State machine
+
+>**[More about: Order state machine](./libs/state-machines/src/lib/order/order-machine.ts)**
+
+![Order State Machine](./apps/web/public/state.png)
+
+
+
+## 👻 LICENCE
+
+[WTFPL](http://www.wtfpl.net/about/)
+
+
+

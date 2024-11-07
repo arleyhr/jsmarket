@@ -1,9 +1,8 @@
+import { OrderStatus } from '@jsmarket/state-machines';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
-import { OrderStatus } from '../order.machine';
-
 
 @ObjectType()
 @Entity()
@@ -16,6 +15,9 @@ export class Order {
   @Field(() => User)
   user: User;
 
+  @Field()
+  @Column()
+  userId: number;
 
   @Field()
   @Column({

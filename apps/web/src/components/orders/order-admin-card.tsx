@@ -1,3 +1,6 @@
+import { canCancelOrder, OrderEvents, OrderStatus } from "@jsmarket/state-machines";
+import { getNextEvent } from "@jsmarket/state-machines";
+
 import { statusColors } from "../../pages/orders";
 
 type OrderAdminCardProps = {
@@ -6,11 +9,17 @@ type OrderAdminCardProps = {
   total: number;
   createdAt: Date;
   customerName: string;
-  latestComment?: string;
-  nextStatus: string;
-  onChangeStatus: (orderId: number) => void;
-  onViewDetails: (orderId: number) => void;
-  onCancel: (orderId: number) => void;
+  onChangeStatus: (action: OrderEvents) => void;
+  onViewDetails: () => void;
+  onCancel: () => void;
+};
+
+const eventNames = {
+  [OrderEvents.startPreparation]: 'Start Preparation',
+  [OrderEvents.cancel]: 'Cancel',
+  [OrderEvents.ship]: 'Ship',
+  [OrderEvents.deliver]: 'Deliver',
+  [OrderEvents.approveReview]: 'Approve Review',
 };
 
 export default function OrderAdminCard({
@@ -19,14 +28,13 @@ export default function OrderAdminCard({
   total,
   createdAt,
   customerName,
-  latestComment,
-  nextStatus,
   onChangeStatus,
   onViewDetails,
   onCancel,
 }: OrderAdminCardProps) {
-  const canCancel = status !== 'delivered';
   const statusColor = statusColors[status as keyof typeof statusColors];
+  const nextEvent = getNextEvent(status as OrderStatus) as OrderEvents;
+  const isCancelable = canCancelOrder(status as OrderStatus);
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -49,34 +57,32 @@ export default function OrderAdminCard({
           <span className="text-gray-500">Total</span>
           <span className="text-gray-900">${total.toFixed(2)}</span>
         </div>
-        {latestComment && (
-          <div className="mt-2 text-sm">
-            <span className="text-gray-500">Comment:</span>
-            <p className="text-gray-900 mt-1">{latestComment}</p>
-          </div>
-        )}
       </div>
 
-      <div className="mt-6 flex flex-col space-y-2">
+      <div className="mt-6 flex flex-col justify-end space-y-2 min-h-[132px]">
+        {nextEvent && (
+          <button
+            onClick={() => onChangeStatus(nextEvent)}
+            className="w-full text-sm rounded border border-gray-300 bg-white px-3 py-2 hover:bg-gray-50"
+          >
+            Move to {eventNames[nextEvent]}
+          </button>
+        )}
         <button
-          onClick={() => onChangeStatus(orderId)}
-          className="w-full text-sm rounded border border-gray-300 bg-white px-3 py-2 hover:bg-gray-50"
-        >
-          Move to {nextStatus}
-        </button>
-        <button
-          onClick={() => onViewDetails(orderId)}
+          onClick={onViewDetails}
           className="w-full text-sm text-blue-600 hover:text-blue-800 px-3 py-2 border border-blue-200 rounded"
         >
           View Details
         </button>
-        <button
-          disabled={!canCancel}
-          onClick={() => onCancel(orderId)}
-          className="w-full text-sm text-red-600 hover:text-red-800 px-3 py-2"
+        {isCancelable && (
+          <button
+            disabled={!isCancelable}
+            onClick={onCancel}
+            className="w-full text-sm text-red-600 hover:text-red-800 px-3 py-2"
         >
-          Cancel
-        </button>
+            Cancel
+          </button>
+        )}
       </div>
     </div>
   );

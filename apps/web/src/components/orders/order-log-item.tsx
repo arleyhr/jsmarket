@@ -1,19 +1,16 @@
 import { IconChevronRight } from '@tabler/icons-react';
 
-import { statusColors, Order } from '../../pages/orders';
+import { statusColors } from '../../pages/orders';
 
 type OrderLogItemProps = {
   orderId: number;
-  customerName: string;
   previousStatus: string | null;
   status: string;
   timestamp: Date;
-  comment: string;
-  orders: Order[];
-  setSelectedOrder: (order: Order) => void;
+  viewOrderDetail: () => void;
 }
 
-export default function OrderLogItem({ orderId, customerName, previousStatus, status, timestamp, comment, orders, setSelectedOrder }: OrderLogItemProps) {
+export default function OrderLogItem({ orderId, previousStatus, status, timestamp, viewOrderDetail }: OrderLogItemProps) {
   return (
     <li className="p-4 hover:bg-gray-50">
       <div className="flex items-center justify-between">
@@ -37,10 +34,7 @@ export default function OrderLogItem({ orderId, customerName, previousStatus, st
           </span>
         </div>
         <button
-          onClick={() => {
-            const order = orders.find(o => o.id === orderId);
-            if (order) setSelectedOrder(order);
-          }}
+          onClick={viewOrderDetail}
           className="text-gray-600 hover:text-gray-800 text-xs underline"
         >
           View details

@@ -29,7 +29,9 @@ export class CartsService {
     const cart = await this.findCart(userId);
 
     if (cart) {
-      return cart;
+      const total = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+      return { ...cart, total };
     }
 
     const newCart = this.cartRepository.create({ user: { id: userId }, isActive: true });
@@ -84,7 +86,7 @@ export class CartsService {
     return result;
   }
 
-  async updateItemQuantity(action: 'add' | 'subtract', userId: number, productId: number, quantity: number): Promise<Cart> {
+  async updateItemQuantity(action: 'add' | 'subtract' | 'set', userId: number, productId: number, quantity: number): Promise<Cart> {
     const cart = await this.findOrCreateCart(userId);
 
     const item = cart.items.find(item => item.productId === productId);
@@ -93,9 +95,15 @@ export class CartsService {
       item.quantity += quantity;
     } else if (action === 'subtract') {
       item.quantity -= quantity;
+    } else if (action === 'set') {
+      item.quantity = quantity;
     }
 
-    await this.cartItemRepository.save(item);
+    if (item.quantity <= 0) {
+      await this.cartItemRepository.delete(item.id);
+    } else {
+      await this.cartItemRepository.save(item);
+    }
 
     const result = await this.findOrCreateCart(userId);
 

@@ -67,11 +67,11 @@ describe('CartsService', () => {
 
   describe('findOrCreateCart', () => {
     it('should return existing cart if found', async () => {
-      const mockCart = { id: 1, items: [] };
+      const mockCart = { id: 1, items: [], total: 0 };
       mockCartRepository.findOne.mockResolvedValue(mockCart);
 
       const result = await service.findOrCreateCart(1);
-      expect(result).toEqual(mockCart);
+      expect(result).toEqual({ ...mockCart, total: 0 });
     });
 
     it('should create new cart if not found', async () => {
@@ -115,6 +115,14 @@ describe('CartsService', () => {
         expect.objectContaining({ quantity: 2 })
       );
     });
+
+    it('should throw error if product not found', async () => {
+      const mockCart = { id: 1, items: [] };
+      mockCartRepository.findOne.mockResolvedValue(mockCart);
+      mockProductsService.findOne.mockResolvedValue(null);
+
+      await expect(service.addItemToCart(1, 1, 1)).rejects.toThrow('Product not found');
+    });
   });
 
   describe('removeItemFromCart', () => {
@@ -128,9 +136,7 @@ describe('CartsService', () => {
 
       expect(mockCartItemRepository.delete).toHaveBeenCalledWith(mockItem.id);
     });
-  });
 
-  describe('updateItemQuantity', () => {
     it('should increase quantity when action is add', async () => {
       const mockItem = { id: 1, productId: 1, quantity: 1 };
       const mockCart = { id: 1, items: [mockItem] };
@@ -155,6 +161,30 @@ describe('CartsService', () => {
       expect(mockCartItemRepository.save).toHaveBeenCalledWith(
         expect.objectContaining({ quantity: 1 })
       );
+    });
+
+    it('should set quantity when action is set', async () => {
+      const mockItem = { id: 1, productId: 1, quantity: 2 };
+      const mockCart = { id: 1, items: [mockItem] };
+
+      mockCartRepository.findOne.mockResolvedValue(mockCart);
+
+      await service.updateItemQuantity('set', 1, 1, 5);
+
+      expect(mockCartItemRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ quantity: 5 })
+      );
+    });
+
+    it('should remove item if quantity is set to zero', async () => {
+      const mockItem = { id: 1, productId: 1, quantity: 2 };
+      const mockCart = { id: 1, items: [mockItem] };
+
+      mockCartRepository.findOne.mockResolvedValue(mockCart);
+
+      await service.updateItemQuantity('set', 1, 1, 0);
+
+      expect(mockCartItemRepository.delete).toHaveBeenCalledWith(mockItem.id);
     });
   });
 });

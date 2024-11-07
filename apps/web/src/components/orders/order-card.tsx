@@ -1,25 +1,25 @@
-import { statusColors } from "../../pages/orders";
+import { Link } from "react-router-dom";
 
-type OrderItem = {
-  id: number;
-  productId: number;
-  quantity: number;
-  price: number;
-  name: string;
-};
+import { statusColors } from "../../pages/orders";
+import { TOrderItem } from "../../queries/orders";
 
 type OrderCardProps = {
+  isCancelable?: boolean;
   orderId: number;
   status: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   total: number;
-  items: OrderItem[];
-  isExpanded: boolean;
-  onToggle: (orderId: string) => void;
+  items: TOrderItem[];
+  isExpanded?: boolean;
+  onToggle?: () => void;
+  onCancelOrder?: () => void;
+  hideCancelBtn?: boolean;
+  defaultExpanded?: boolean;
 }
 
 export default function OrderCard({
+  isCancelable,
   orderId,
   status,
   createdAt,
@@ -27,7 +27,10 @@ export default function OrderCard({
   total,
   items,
   isExpanded,
-  onToggle
+  onToggle,
+  onCancelOrder,
+  hideCancelBtn,
+  defaultExpanded,
 }: OrderCardProps) {
   const statusColor = statusColors[status as keyof typeof statusColors];
 
@@ -57,22 +60,26 @@ export default function OrderCard({
       <div className="mt-6 border-t pt-4">
         <div className="flex justify-between mb-2">
           <p className="text-sm font-medium">{items.length} items</p>
-          <button
-            onClick={() => onToggle(orderId.toString())}
-            className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            {isExpanded ? 'Hide order details' : 'View order details'}
-          </button>
+          {!defaultExpanded && (
+            <button
+              onClick={onToggle}
+              className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+            >
+              View order details
+            </button>
+          )}
         </div>
-        {isExpanded ? (
+        {isExpanded || defaultExpanded ? (
           <div className="space-y-4">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-6 mt-3">
+              <div key={item.productId} className="flex gap-6 mt-3">
                 <div className="w-24 h-24 bg-gray-100 rounded flex items-center justify-center">
-                  <span className="text-gray-400">No image</span>
+                  <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover rounded" />
                 </div>
                 <div>
-                  <p className="font-medium">{item.name}</p>
+                  <Link to={`/products/${item.productId}`}>
+                    <p className="font-medium">{item.productName}</p>
+                  </Link>
                   <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
                   <p className="text-sm text-gray-600">Price: ${item.price}</p>
                 </div>
@@ -82,13 +89,23 @@ export default function OrderCard({
         ) : (
           <div className="flex gap-6 mt-3">
             <div className="w-24 h-24 bg-gray-100 rounded flex items-center justify-center">
-              <span className="text-gray-400">No image</span>
+              <img src={items[0].productImage} alt={items[0].productName} className="w-full h-full object-cover rounded" />
             </div>
             <div>
-              <p className="font-medium">{items[0].name}</p>
+              <Link to={`/products/${items[0].productId}`}>
+                <p className="font-medium">{items[0].productName}</p>
+              </Link>
               <p className="text-sm text-gray-600 mt-1">Quantity: {items[0].quantity}</p>
             </div>
           </div>
+        )}
+        {isCancelable && (
+          <button
+            className="mt-4 text-sm text-red-600 hover:text-red-800"
+            onClick={onCancelOrder}
+          >
+            Cancel Order
+          </button>
         )}
       </div>
     </div>

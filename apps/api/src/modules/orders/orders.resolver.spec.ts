@@ -1,8 +1,8 @@
+import { OrderEvents, OrderStatus } from '@jsmarket/state-machines';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { UserRole } from '../auth/entities/user.entity';
 
-import { OrderEvents, OrderStatus } from './order.machine';
 import { OrdersResolver } from './orders.resolver';
 import { OrdersService } from './orders.service';
 
@@ -38,7 +38,9 @@ describe('OrdersResolver', () => {
   const mockOrdersService = {
     createOrder: jest.fn(),
     getOrder: jest.fn(),
-    processOrderStatusUpdate: jest.fn()
+    processOrderStatusUpdate: jest.fn(),
+    getOrders: jest.fn(),
+    getOrdersStatusLogs: jest.fn()
   };
 
   beforeEach(async () => {
@@ -69,6 +71,12 @@ describe('OrdersResolver', () => {
       expect(result).toEqual(mockOrder);
       expect(mockOrdersService.createOrder).toHaveBeenCalledWith(mockUser.id, mockUser);
     });
+
+    it('should throw error if order creation fails', async () => {
+      mockOrdersService.createOrder.mockRejectedValue(new Error('Failed to create order'));
+
+      await expect(resolver.createOrder(mockUser)).rejects.toThrow('Failed to create order');
+    });
   });
 
   describe('getOrder', () => {
@@ -79,6 +87,12 @@ describe('OrdersResolver', () => {
 
       expect(result).toEqual(mockOrder);
       expect(mockOrdersService.getOrder).toHaveBeenCalledWith(1, mockUser);
+    });
+
+    it('should throw error if order not found', async () => {
+      mockOrdersService.getOrder.mockRejectedValue(new Error('Order not found'));
+
+      await expect(resolver.getOrder(999, mockUser)).rejects.toThrow('Order not found');
     });
   });
 
@@ -100,6 +114,71 @@ describe('OrdersResolver', () => {
         OrderEvents.startPreparation,
         'Test comment'
       );
+    });
+
+    it('should throw error if status update fails', async () => {
+      mockOrdersService.processOrderStatusUpdate.mockRejectedValue(new Error('Invalid status transition'));
+
+      await expect(
+        resolver.updateOrderStatus(mockUser, 1, OrderEvents.startPreparation)
+      ).rejects.toThrow('Invalid status transition');
+    });
+  });
+
+  describe('getOrders', () => {
+    it('should get all orders for user', async () => {
+      const mockOrders = [mockOrder];
+      mockOrdersService.getOrders.mockResolvedValue(mockOrders);
+
+      const result = await resolver.getOrders(mockUser);
+      expect(result).toEqual(mockOrders);
+      expect(mockOrdersService.getOrders).toHaveBeenCalledWith(mockUser, undefined, undefined);
+    });
+
+    it('should get filtered orders by status', async () => {
+      const mockOrders = [mockOrder];
+      mockOrdersService.getOrders.mockResolvedValue(mockOrders);
+
+      const result = await resolver.getOrders(mockUser, false, OrderStatus.Pending);
+
+      expect(result).toEqual(mockOrders);
+      expect(mockOrdersService.getOrders).toHaveBeenCalledWith(mockUser, false, OrderStatus.Pending);
+    });
+  });
+
+  describe('getOrdersStatusLogs', () => {
+    it('should get status logs for all orders', async () => {
+      const mockLogs = [{
+        id: 1,
+        orderId: 1,
+        status: OrderStatus.Pending,
+        previousStatus: null,
+        comment: 'Initial status',
+        createdAt: new Date()
+      }];
+      mockOrdersService.getOrdersStatusLogs.mockResolvedValue(mockLogs);
+
+      const result = await resolver.getOrdersStatusLogs();
+
+      expect(result).toEqual(mockLogs);
+      expect(mockOrdersService.getOrdersStatusLogs).toHaveBeenCalledWith(undefined);
+    });
+
+    it('should get status logs for specific order', async () => {
+      const mockLogs = [{
+        id: 1,
+        orderId: 1,
+        status: OrderStatus.Pending,
+        previousStatus: null,
+        comment: 'Initial status',
+        createdAt: new Date()
+      }];
+      mockOrdersService.getOrdersStatusLogs.mockResolvedValue(mockLogs);
+
+      const result = await resolver.getOrdersStatusLogs(1);
+
+      expect(result).toEqual(mockLogs);
+      expect(mockOrdersService.getOrdersStatusLogs).toHaveBeenCalledWith(1);
     });
   });
 });

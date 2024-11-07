@@ -52,7 +52,7 @@ const resolveFilter = (filter: string) => {
   }
 };
 
-export const useProductsQuery = () => {
+export const useProducts = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = parseInt(searchParams.get('page') || DEFAULT_PAGE.toString());

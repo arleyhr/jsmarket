@@ -26,7 +26,7 @@ export class CartsResolver {
 
   @UseGuards(JwtAuthGuard)
   @Mutation(() => Cart)
-  updateItemQuantity(@CurrentUser() user: User, @Args('productId') productId: number, @Args('action') action: 'add' | 'subtract', @Args('quantity') quantity: number) {
+  updateItemQuantity(@CurrentUser() user: User, @Args('productId') productId: number, @Args('action') action: 'add' | 'subtract' | 'set', @Args('quantity') quantity: number) {
     return this.cartsService.updateItemQuantity(action, user.id, productId, quantity);
   }
 
