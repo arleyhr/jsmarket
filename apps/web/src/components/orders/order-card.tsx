@@ -14,7 +14,6 @@ type OrderCardProps = {
   isExpanded?: boolean;
   onToggle?: () => void;
   onCancelOrder?: () => void;
-  hideCancelBtn?: boolean;
   defaultExpanded?: boolean;
 }
 
@@ -29,7 +28,6 @@ export default function OrderCard({
   isExpanded,
   onToggle,
   onCancelOrder,
-  hideCancelBtn,
   defaultExpanded,
 }: OrderCardProps) {
   const statusColor = statusColors[status as keyof typeof statusColors];

@@ -4,6 +4,7 @@ import ConfirmCancelOrderModal from '../components/orders/cancel-confirm-modal';
 import OrderAdminCard from '../components/orders/order-admin-card';
 import OrderDetailModal from '../components/orders/order-detail-modal';
 import OrderLogItem from '../components/orders/order-log-item';
+import OrderStatusUpdateModal from '../components/orders/order-status-update-modal';
 import { StatusDropdown } from '../components/orders/status-dropdown';
 import { useAdminOrders } from '../hooks/useAdminOrders';
 
@@ -25,6 +26,9 @@ export default function OrdersAdmin() {
     updateLoading,
     setStatusFilter,
     setHistoryOrderId,
+    setStatusComment,
+    closeStatusUpdateModal,
+    confirmStatusUpdate
   } = useAdminOrders();
 
   return (
@@ -112,14 +116,25 @@ export default function OrdersAdmin() {
 
       {state.selectedOrder && (
         <OrderDetailModal
-          orderId={state.selectedOrder.id}
-          status={state.selectedOrder.status}
-          comment={state.selectedOrder.statusHistory?.[0]?.comment || ''}
-          date={state.selectedOrder.createdAt}
-          total={state.selectedOrder.total}
-          items={state.selectedOrder.items}
-          customerName={`${state.selectedOrder.user.firstName} ${state.selectedOrder.user.lastName}`}
+          orderId={state.selectedOrder?.id}
+          status={state.selectedOrder?.status}
+          comment={state.selectedOrder?.statusHistory?.find(log => log.status === state.selectedOrder?.status)?.comment || ''}
+          date={state.selectedOrder?.createdAt}
+          total={state.selectedOrder?.total}
+          items={state.selectedOrder?.items}
+          customerName={`${state.selectedOrder?.user.firstName} ${state.selectedOrder?.user.lastName}`}
           onClose={() => setSelectedOrder(null)}
+        />
+      )}
+
+      {state.statusUpdateModal.isOpen && (
+        <OrderStatusUpdateModal
+          loading={updateLoading}
+          comment={state.statusUpdateModal.comment}
+          onCancel={closeStatusUpdateModal}
+          onConfirm={confirmStatusUpdate}
+          onCommentChange={comment => setStatusComment(comment)}
+          action={state.statusUpdateModal.action!}
         />
       )}
     </div>

@@ -15,6 +15,12 @@ type State = {
   cancelReason: string;
   statusFilter: OrderStatus | '';
   historyOrderId: number | null;
+  statusUpdateModal: {
+    isOpen: boolean;
+    orderId: number | null;
+    action: OrderEvents | null;
+    comment: string;
+  };
 }
 
 type Action =
@@ -24,7 +30,10 @@ type Action =
   | { type: 'SET_CANCEL_REASON'; payload: string }
   | { type: 'SET_STATUS_FILTER'; payload: OrderStatus }
   | { type: 'SET_STATUS_HISTORY_ORDER_ID'; payload: number }
-  | { type: 'RESET_CANCEL' };
+  | { type: 'SET_STATUS_COMMENT'; payload: string }
+  | { type: 'RESET_CANCEL' }
+  | { type: 'OPEN_STATUS_UPDATE_MODAL'; payload: { orderId: number; action: OrderEvents } }
+  | { type: 'CLOSE_STATUS_UPDATE_MODAL' };
 
 const initialState: State = {
   selectedOrder: null,
@@ -32,7 +41,13 @@ const initialState: State = {
   cancelOrderId: null,
   cancelReason: '',
   statusFilter: '',
-  historyOrderId: null
+  historyOrderId: null,
+  statusUpdateModal: {
+    isOpen: false,
+    orderId: null,
+    action: null,
+    comment: ''
+  }
 };
 
 function reducer(state: State, action: Action): State {
@@ -49,8 +64,36 @@ function reducer(state: State, action: Action): State {
       return { ...state, statusFilter: action.payload };
     case 'SET_STATUS_HISTORY_ORDER_ID':
       return { ...state, historyOrderId: action.payload };
+    case 'SET_STATUS_COMMENT':
+      return {
+        ...state,
+        statusUpdateModal: {
+          ...state.statusUpdateModal,
+          comment: action.payload
+        }
+      };
     case 'RESET_CANCEL':
       return { ...state, cancelOrderId: null, cancelReason: '' };
+    case 'OPEN_STATUS_UPDATE_MODAL':
+      return {
+        ...state,
+        statusUpdateModal: {
+          isOpen: true,
+          orderId: action.payload.orderId,
+          action: action.payload.action,
+          comment: ''
+        }
+      };
+    case 'CLOSE_STATUS_UPDATE_MODAL':
+      return {
+        ...state,
+        statusUpdateModal: {
+          isOpen: false,
+          orderId: null,
+          action: null,
+          comment: ''
+        }
+      };
     default:
       return state;
   }
@@ -63,8 +106,23 @@ export const useAdminOrders = () => {
   const { statusLogs, loading: statusLogsLoading, refetch: refetchStatusLogs } = useOrdersStatusLogs();
 
   const handleStatusChange = (orderId: number, action: OrderEvents) => {
-    const updateStatusLogs = true;
-    updateOrderStatus(orderId, action as OrderEvents, '', updateStatusLogs);
+    dispatch({
+      type: 'OPEN_STATUS_UPDATE_MODAL',
+      payload: { orderId, action }
+    });
+  };
+
+  const closeStatusUpdateModal = () => {
+    dispatch({ type: 'CLOSE_STATUS_UPDATE_MODAL' });
+  };
+
+  const confirmStatusUpdate = () => {
+    const { orderId, action, comment } = state.statusUpdateModal;
+    if (orderId && action) {
+      const updateStatusLogs = true;
+      updateOrderStatus(orderId, action, comment, updateStatusLogs);
+      dispatch({ type: 'CLOSE_STATUS_UPDATE_MODAL' });
+    }
   };
 
   const handleCancel = (orderId: number) => {
@@ -105,6 +163,10 @@ export const useAdminOrders = () => {
     refetchStatusLogs(orderId);
   };
 
+  const setStatusComment = (comment: string) => {
+    dispatch({ type: 'SET_STATUS_COMMENT', payload: comment });
+  };
+
   const getOrder = async (orderId: number) => {
     if (!orderId) {
       setSelectedOrder(null);
@@ -135,5 +197,8 @@ export const useAdminOrders = () => {
     statusLogsLoading,
     setStatusFilter,
     setHistoryOrderId,
+    setStatusComment,
+    confirmStatusUpdate,
+    closeStatusUpdateModal
   };
 }
