@@ -28,8 +28,8 @@ A modern e-commerce web application built with NestJS and React, using an Nx mon
 - 🔒 Secure GraphQL API
 
 ## 🛠️ Tech Stack
-- **Frontend**: React, Apollo Client, TailwindCSS
-- **Backend**: NestJS, TypeORM, GraphQL
+- **[Frontend](./apps/web)**: React, Apollo Client, TailwindCSS
+- **[Backend](./apps/api)**: NestJS, TypeORM, GraphQL
 - **Testing**: Jest
 - **Database**: SQLite
 
