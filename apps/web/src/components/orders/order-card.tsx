@@ -81,7 +81,7 @@ export default function OrderCard({
                     <p className="font-medium">{item.productName}</p>
                   </Link>
                   <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
-                  <p className="text-sm text-gray-600">Price: ${item.price}</p>
+                  <p className="text-sm text-gray-600">Price: ${item.price * item.quantity}</p>
                 </div>
               </div>
             ))}
@@ -96,6 +96,7 @@ export default function OrderCard({
                 <p className="font-medium">{items[0].productName}</p>
               </Link>
               <p className="text-sm text-gray-600 mt-1">Quantity: {items[0].quantity}</p>
+              <p className="text-sm text-gray-600">Price: ${items[0].price * items[0].quantity}</p>
             </div>
           </div>
         )}

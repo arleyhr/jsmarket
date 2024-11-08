@@ -36,7 +36,7 @@ export default function CartCheckoutCard({
         <Link to={`/products/${productId}`}>
           <h3 className="font-medium">{productName}</h3>
         </Link>
-        <p className="text-yellow-600 font-medium">${price}</p>
+        <p className="text-yellow-600 font-medium">${price * quantity}</p>
         <div className="mt-2 flex items-center">
           <button
             onClick={subtractItemQuantity}

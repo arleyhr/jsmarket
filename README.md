@@ -54,6 +54,29 @@ A modern e-commerce web application built with NestJS and React, using an Nx mon
   npx nx run dev
 ```
 
+Go to [http://localhost:4200](http://localhost:4200) to see the app.
+
+### 🐳 Running with Docker
+
+```bash
+  docker-compose -f docker-compose.prod.yml up --build
+```
+
+### 👥 Available Users
+
+You can use any of these users to test the application:
+
+#### Administrator
+- Email: admin@jsmarket.com
+- Password: admin123
+- Role: Admin
+
+#### Regular User
+- Email: john@wick.com
+- Password: andy
+- Role: Regular user
+
+
 ## State machine
 
 >**[More about: Order state machine](./libs/state-machines/src/lib/order/order-machine.ts)**

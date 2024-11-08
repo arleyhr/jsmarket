@@ -13,7 +13,7 @@ type ProductCardProps = {
 const ProductCard = ({ image, name, price, quantity, onRemove, onQuantityChange }: ProductCardProps) => (
   <div className="flex flex-col items-center mb-2 p-1">
     <img src={image} alt={name} className="w-20 h-20 object-cover mb-2" />
-    <p className="text-black font-semibold text-center">${price}</p>
+    <p className="text-black font-semibold text-center">${price * quantity}</p>
     <div className="flex items-center gap-2 mt-2">
       <QuantitySelector quantity={quantity} onQuantityChange={onQuantityChange} />
       <RemoveButton onClick={onRemove} />
