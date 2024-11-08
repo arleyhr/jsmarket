@@ -83,7 +83,17 @@ You can use any of these users to test the application:
 
 ![Order State Machine](./apps/web/public/state.png)
 
+# Screenshots
 
+![Home](./apps/web/public/screenshot1.png)
+
+![Cart](./apps/web/public/screenshot2.png)
+
+![Cart Sidebar](./apps/web/public/screenshot5.png)
+
+![Checkout](./apps/web/public/screenshot3.png)
+
+![Orders](./apps/web/public/screenshot4.png)
 
 ## 👻 LICENCE
 

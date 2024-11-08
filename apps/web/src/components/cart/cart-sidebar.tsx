@@ -39,6 +39,7 @@ const CartSidebar = () => {
           products.map((product, index) => (
             <div key={product.productId}>
               <ProductCard
+                productId={product.productId}
                 image={product.productImage}
                 name={product.productName}
                 price={product.price}
