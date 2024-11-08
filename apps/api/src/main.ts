@@ -44,10 +44,8 @@ async function bootstrap() {
     logger.error('❌ Error creating seed users:', error.message);
   }
 
-  if (process.env.NODE_ENV !== 'production') {
-    app.enableCors();
-    Logger.log('CORS enabled');
-  }
+  app.enableCors();
+  Logger.log('CORS enabled');
 
   const port = process.env.PORT || 3333;
   await app.listen(port);

@@ -65,7 +65,7 @@ export default function OrderAdminCard({
             onClick={() => onChangeStatus(nextEvent)}
             className="w-full text-sm rounded border border-gray-300 bg-white px-3 py-2 hover:bg-gray-50"
           >
-            Move to {eventNames[nextEvent]}
+            {eventNames[nextEvent]}
           </button>
         )}
         <button

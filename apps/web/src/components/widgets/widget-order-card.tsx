@@ -1,21 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 
+import { TOrder } from '../../queries/orders';
 import LineButton from '../buttons/line';
 import WidgetCard from '../cards/widget';
 
-import OrderItem, { Order } from './widget-order-item';
+import OrderItem from './widget-order-item';
 
-const EmptyOrders = () => (
-  <div className="text-center py-8">
-    <p className="text-gray-500 text-lg">You have no recent orders</p>
+const EmptyOrders = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="text-center py-8">
+      <p className="text-gray-500 text-lg">You have no recent orders</p>
     <div className="mt-4 w-36 mx-auto">
-      <LineButton text="Start shopping" />
+      <LineButton text="Start shopping" onClick={() => navigate('/products')} />
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 type WidgetOrderCardProps = {
-  orders: Order[];
+  orders: TOrder[];
 };
 
 const WidgetOrderCard = ({ orders }: WidgetOrderCardProps) => {
@@ -30,7 +35,12 @@ const WidgetOrderCard = ({ orders }: WidgetOrderCardProps) => {
       emptyComponent={<EmptyOrders />}
     >
       {orders.map(order => (
-        <OrderItem key={order.id} order={order} />
+        <OrderItem
+          key={order.id}
+          image={order.items[0].productImage}
+          productName={order.items[0].productName}
+          status={order.status}
+        />
       ))}
     </WidgetCard>
   );

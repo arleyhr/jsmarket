@@ -1,0 +1,44 @@
+FROM node:20-bullseye
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    git \
+    sqlite3
+
+# Create data directory
+RUN mkdir -p /app/data && chmod 777 /app/data
+
+# Copy configuration files
+COPY package*.json ./
+COPY nx.json ./
+COPY tsconfig*.json ./
+
+# Install dependencies
+RUN npm ci --legacy-peer-deps
+
+# Copy source code
+COPY . .
+
+# Build the applications
+RUN npm run build:prod
+
+# Rebuild bcrypt
+RUN npm rebuild bcrypt --build-from-source
+
+# Clean dev dependencies
+RUN npm prune --production
+
+# Expose ports
+EXPOSE 3333 4200
+
+# Copy start script
+COPY start-prod.sh /app/start-prod.sh
+RUN chmod +x /app/start-prod.sh
+
+# Start both services
+CMD ["/app/start-prod.sh"]

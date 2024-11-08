@@ -12,6 +12,9 @@ import {
   UPDATE_CART_ITEM_QUANTITY,
 } from '../queries/cart';
 
+import { useAuth } from './useAuth';
+import { useLoginModal } from './useLoginModal';
+
 export function useCart() {
   const { data, loading, error } = useQuery(GET_CART);
 
@@ -82,11 +85,16 @@ export function useCheckoutCart() {
 
 export function useAddToCart() {
   const { openSidebar } = useCartSidebar();
+  const { openModal } = useLoginModal();
+  const { isAuthenticated } = useAuth();
   const [addToCart, { loading, error }] = useMutation(ADD_PRODUCT_TO_CART, {
     refetchQueries: [GET_CART],
   });
 
   const handleAddProductToCart = (productId: number, quantity = 1) => {
+    if (!isAuthenticated) {
+      return openModal();
+    }
     addToCart({ variables: { productId, quantity } });
     return openSidebar();
   };

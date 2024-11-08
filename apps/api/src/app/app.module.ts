@@ -31,13 +31,14 @@ import { AppService } from './app.service';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: './db.sqlite',
+      database: process.env.DATABASE_URL || './db.sqlite',
       entities: [User, Cart, CartItem, Order, OrderItem, OrderStatusHistory],
       synchronize: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      csrfPrevention: false,
     }),
     AuthModule,
     ProductsModule,
