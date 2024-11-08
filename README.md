@@ -18,6 +18,10 @@
 ## Description
 A modern e-commerce web application built with NestJS and React, using an Nx monorepo architecture.
 
+## App Overview
+![overview](https://github.com/user-attachments/assets/609a3b6d-8e5c-41bf-897c-faed14a044e3)
+
+
 ## 🚀 Key Features
 - 🛍️ Product catalog with search and filtering
 - 🛒 Shopping cart
@@ -26,12 +30,31 @@ A modern e-commerce web application built with NestJS and React, using an Nx mon
 - 💳 Checkout process
 - 🎨 Modern UI with Tailwind CSS
 - 🔒 Secure GraphQL API
-
+  
 ## 🛠️ Tech Stack
 - **[Frontend](./apps/web)**: React, Apollo Client, TailwindCSS
 - **[Backend](./apps/api)**: NestJS, TypeORM, GraphQL
 - **Testing**: Jest
 - **Database**: SQLite
+- **Products Datasource**: [dummyjson.com](https://dummyjson.com/)
+  
+______
+> **DEMO**: [https://jsmarket.vercel.app](https://jsmarket.vercel.app/)
+______
+### 👥 Available Users
+
+You can use any of these users to test the application:
+
+#### Administrator
+- Email: admin@jsmarket.com
+- Password: admin123
+- Role: Admin
+
+#### Regular User
+- Email: john@wick.com
+- Password: andy
+- Role: Regular user
+
 
 ## Local Development
 
@@ -61,20 +84,6 @@ Go to [http://localhost:4200](http://localhost:4200) to see the app.
 ```bash
   docker-compose -f docker-compose.prod.yml up --build
 ```
-
-### 👥 Available Users
-
-You can use any of these users to test the application:
-
-#### Administrator
-- Email: admin@jsmarket.com
-- Password: admin123
-- Role: Admin
-
-#### Regular User
-- Email: john@wick.com
-- Password: andy
-- Role: Regular user
 
 
 ## State machine
