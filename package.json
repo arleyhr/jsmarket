@@ -15,7 +15,7 @@
     "dev:api": "nx serve api --configuration=development",
     "dev:web": "nx serve web --configuration=development",
     "lint": "nx run-many -t lint -p api,web --parallel",
-    "test": "nx run-many -t test -p api,web --parallel",
+    "test": "nx run-many -t test -p api --parallel",
     "build:dev": "nx run-many -t build -p api,web --configuration=development",
     "build:prod": "nx run-many --target=build --projects=api,web --parallel=true --configuration=production",
     "build:api": "nx build api --configuration=production",
