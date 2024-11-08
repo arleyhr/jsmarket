@@ -14,7 +14,7 @@ type OrderAdminCardProps = {
   onCancel: () => void;
 };
 
-const eventNames = {
+export const eventNames = {
   [OrderEvents.startPreparation]: 'Start Preparation',
   [OrderEvents.cancel]: 'Cancel',
   [OrderEvents.ship]: 'Ship',
