@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { OrderEvents, OrderStatus } from '@jsmarket/state-machines';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 import { GET_ORDERS, GET_ORDERS_STATUS_LOGS, GET_ORDER, UPDATE_ORDER_STATUS, TOrder, TOrderStatusHistory } from '../queries/orders';
 
@@ -21,7 +21,9 @@ export const useOrders = (admin?: boolean) => {
 };
 
 export const useOrdersStatusLogs = () => {
-  const { data, loading, error, refetch } = useQuery(GET_ORDERS_STATUS_LOGS);
+  const { data, loading, error, refetch } = useQuery(GET_ORDERS_STATUS_LOGS, {
+    fetchPolicy: 'network-only'
+  });
 
   const statusLogs: TOrderStatusHistory[] = data?.ordersStatusLogs || [];
 
@@ -46,10 +48,6 @@ export const useUpdateOrderStatus = () => {
       toast.error(error.message, {
         duration: 6000,
         position: 'bottom-center',
-        iconTheme: {
-          primary: '#FF9900',
-          secondary: '#FFFFFF',
-        },
       });
     },
   });
@@ -58,6 +56,9 @@ export const useUpdateOrderStatus = () => {
     updateOrderStatus({
       variables: { orderId: parseInt(orderId.toString()), event, comment },
       refetchQueries: [GET_ORDERS, updateStatusLogs ? GET_ORDERS_STATUS_LOGS : ''],
+      onCompleted: () => {
+        toast.success('Order status updated successfully');
+      },
     });
   };
 

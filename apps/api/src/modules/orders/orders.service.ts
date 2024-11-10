@@ -130,14 +130,14 @@ export class OrdersService {
     }
 
     const nextStatus = getNextOrderStatus(order.status as OrderStatus, event, user.role, order.total);
+    const previousStatus = order.status;
 
     order.status = nextStatus;
 
-    const previousStatus = order.statusHistory[order.statusHistory.length - 1];
     const statusHistory = this.orderStatusHistoryRepository.create({
-      status: order.status,
-      previousStatus: previousStatus.status,
+      previousStatus,
       comment,
+      status: nextStatus,
       createdAt: new Date(),
     });
 

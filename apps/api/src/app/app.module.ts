@@ -30,8 +30,8 @@ import { AppService } from './app.service';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: process.env.DATABASE_URL || './db.sqlite',
+      type: process.env.DATABASE_URL?.includes('mysql') ? 'mysql' : 'sqlite',
+      url: process.env.DATABASE_URL  || './db.sqlite',
       entities: [User, Cart, CartItem, Order, OrderItem, OrderStatusHistory],
       synchronize: true,
     }),

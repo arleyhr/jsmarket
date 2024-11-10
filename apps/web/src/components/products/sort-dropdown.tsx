@@ -14,7 +14,7 @@ type SortDropdownProps = {
 const SortDropdown = ({ sortBy, sortOptions, onSort }: SortDropdownProps) => (
   <div className="relative">
     <select
-      className="appearance-none h-10 w-64 bg-gray-100 text-gray-800 px-4 pr-8 rounded-lg focus:outline-none border border-gray-300"
+      className="appearance-none h-10 w-full sm:w-64 bg-gray-100 text-gray-800 px-4 pr-8 rounded-lg focus:outline-none border border-gray-300"
       value={sortBy}
       onChange={e => onSort(e.target.value)}
     >

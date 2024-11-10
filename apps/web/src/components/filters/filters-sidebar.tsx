@@ -21,7 +21,7 @@ export default function FiltersSidebar({
   onDiscountChange,
 }: FiltersSidebarProps) {
   return (
-    <div className="w-64 min-h-screen bg-gray-100 p-4 border-r border-gray-300">
+    <div className="w-full lg:w-64 bg-white lg:bg-gray-100 p-4 lg:border-r lg:border-gray-300">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-3">Categories</h2>
         <div className="space-y-2">

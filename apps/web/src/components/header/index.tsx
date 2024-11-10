@@ -32,22 +32,53 @@ const Header = () => {
   return (
     <header className="w-full bg-zinc-900 text-white">
       <div className="max-w-7xl mx-auto px-4 py-2">
-        <div className="flex items-center justify-between">
-          <Link to="/">
-            <Logo />
-          </Link>
-          <SearchBar
-            onSearch={(query, category) => {
-              navigate({
-                pathname: '/products',
-                search: `?${new URLSearchParams({
-                  query: query || '',
-                  category: category || '',
-                })}`,
-              });
-            }}
-          />
-          <div className="flex space-x-6 justify-end">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-0">
+          <div className="flex items-center justify-between lg:justify-start lg:w-1/6">
+            <Link to="/">
+              <Logo />
+            </Link>
+            <div className="flex items-center space-x-4 lg:hidden">
+              {isAuthenticated && user?.firstName && (
+                <span className="text-sm font-medium">{user.firstName}</span>
+              )}
+              <UserMenu
+                idAdmin={user?.role === UserRole.ADMIN}
+                showUserMenu={showUserMenu}
+                setShowUserMenu={value => {
+                  prevAuthActions(() => setShowUserMenu(value));
+                }}
+                logout={logout}
+              />
+              <CartButton
+                count={cartCount}
+                onClick={() => {
+                  prevAuthActions(() => {
+                    if (isSidebarOpen) {
+                      closeSidebar();
+                    } else {
+                      openSidebar();
+                    }
+                  });
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="w-full lg:max-w-xxl lg:mx-8">
+            <SearchBar
+              onSearch={(query, category) => {
+                navigate({
+                  pathname: '/products',
+                  search: `?${new URLSearchParams({
+                    query: query || '',
+                    category: category || '',
+                  })}`,
+                });
+              }}
+            />
+          </div>
+
+          <div className="hidden lg:flex lg:items-center lg:space-x-6">
             {isAuthenticated && user?.firstName && (
               <span className="text-sm font-medium">{user.firstName}</span>
             )}
