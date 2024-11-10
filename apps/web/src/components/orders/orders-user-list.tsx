@@ -45,12 +45,17 @@ export default function OrderList({ orders }: OrderListProps) {
     }
   };
 
+  const handleMarkDelivered = (orderId: number) => {
+    updateOrderStatus(orderId, OrderEvents.deliver);
+  };
+
   return (
     <div className="space-y-6">
       {orders.map(order => (
         <OrderCard
           key={order.id}
           isCancelable={canCancelOrder(order.status as OrderStatus)}
+          isMarkableAsDelivered={order.status === OrderStatus.Shipped}
           orderId={order.id}
           status={order.status}
           createdAt={order.createdAt}
@@ -60,6 +65,7 @@ export default function OrderList({ orders }: OrderListProps) {
           isExpanded={expandedOrder === order.id}
           onToggle={() => toggleOrderDetails(order.id)}
           onCancelOrder={() => handleCancelOrder(order.id)}
+          onMarkDelivered={() => handleMarkDelivered(order.id)}
         />
       ))}
       {

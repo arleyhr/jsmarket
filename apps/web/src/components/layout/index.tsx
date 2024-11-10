@@ -1,4 +1,4 @@
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 
 import { useCartSidebar } from '../../hooks/useCart';
 import { useLoginModal } from '../../hooks/useLoginModal';
@@ -21,10 +21,14 @@ function Layout({ children }: LayoutProps) {
       <Header />
       <div className="flex flex-1">
         <main className="flex-1">
-          <div className="max-w-7xl mx-auto px-4 py-8">{children}</div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">{children}</div>
         </main>
       </div>
-      {isSidebarOpen && <CartSidebar />}
+      {isSidebarOpen && (
+        <div className="hidden md:block">
+          <CartSidebar />
+        </div>
+      )}
       {isOpen && <LoginModal onClose={closeModal} />}
       <Toaster />
       <Footer />

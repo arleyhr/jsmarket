@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { makeVar, useReactiveVar } from '@apollo/client';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import client from '../apollo';
 import {
@@ -89,6 +90,9 @@ export function useAddToCart() {
   const { isAuthenticated } = useAuth();
   const [addToCart, { loading, error }] = useMutation(ADD_PRODUCT_TO_CART, {
     refetchQueries: [GET_CART],
+    onCompleted: () => {
+      toast.success('Product added to cart');
+    },
   });
 
   const handleAddProductToCart = (productId: number, quantity = 1) => {
