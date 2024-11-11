@@ -1,4 +1,5 @@
 import { useQuery, useMutation } from '@apollo/client';
+import { UserRole } from '@jsmarket/state-machines';
 
 import client from '../apollo';
 import { GET_CURRENT_USER, LOGIN_MUTATION, REGISTER_MUTATION } from '../queries/user';
@@ -12,11 +13,14 @@ export const useAuth = () => {
     window.location.reload();
   };
 
+  const isAdmin = userData?.me?.role === UserRole.ADMIN;
+
   return {
+    isAdmin,
+    logout,
     user: userData?.me,
     isLoading: userLoading,
     isAuthenticated: !!userData?.me,
-    logout
   };
 };
 
