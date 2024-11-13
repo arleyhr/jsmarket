@@ -2,6 +2,8 @@ import { Toaster } from 'sonner';
 
 import { useCartSidebar } from '../../hooks/useCart';
 import { useLoginModal } from '../../hooks/useLoginModal';
+import { useHealthCheck } from '../../queries/app';
+import AppColdstart from '../app-coldstart';
 import CartSidebar from '../cart/cart-sidebar';
 import Footer from '../footer';
 import Header from '../header';
@@ -15,6 +17,7 @@ interface LayoutProps {
 function Layout({ children }: LayoutProps) {
   const { isOpen, closeModal } = useLoginModal();
   const { isSidebarOpen } = useCartSidebar();
+  const isServerStarting = useHealthCheck();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -30,6 +33,7 @@ function Layout({ children }: LayoutProps) {
         </div>
       )}
       {isOpen && <LoginModal onClose={closeModal} />}
+      {isServerStarting && <AppColdstart />}
       <Toaster />
       <Footer />
     </div>

@@ -16,6 +16,7 @@ import { OrdersModule } from '../modules/orders/orders.module';
 import { ProductsModule } from '../modules/products/products.module';
 
 import { AppController } from './app.controller';
+import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 
 const isMySQLConfig = process.env?.DATABASE_URL?.includes('mysql');
@@ -48,6 +49,6 @@ const isMySQLConfig = process.env?.DATABASE_URL?.includes('mysql');
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}
