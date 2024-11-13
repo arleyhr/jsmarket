@@ -18,6 +18,8 @@ import { ProductsModule } from '../modules/products/products.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+const isMySQLConfig = process.env?.DATABASE_URL?.includes('mysql');
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -30,8 +32,8 @@ import { AppService } from './app.service';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRoot({
-      type: process.env.DATABASE_URL?.includes('mysql') ? 'mysql' : 'sqlite',
-      url: process.env.DATABASE_URL  || './db.sqlite',
+      [isMySQLConfig ? 'url' : 'database']: process.env?.DATABASE_URL ?? './db.sqlite',
+      type: isMySQLConfig ? 'mysql' : 'sqlite',
       entities: [User, Cart, CartItem, Order, OrderItem, OrderStatusHistory],
       synchronize: true,
     }),
