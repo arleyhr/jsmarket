@@ -15,9 +15,9 @@ interface LayoutProps {
 }
 
 function Layout({ children }: LayoutProps) {
+  const isServerStarting = useHealthCheck();
   const { isOpen, closeModal } = useLoginModal();
   const { isSidebarOpen } = useCartSidebar();
-  const isServerStarting = useHealthCheck();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
