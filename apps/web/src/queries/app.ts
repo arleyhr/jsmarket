@@ -1,35 +1,14 @@
 import { gql } from "@apollo/client";
-import { useEffect, useState } from "react";
-
-import client from "../apollo";
+import { useQuery } from "@apollo/client";
 
 export const useHealthCheck = () => {
-  const [isStarting, setIsStarting] = useState(true);
-
-  const HEALTH_CHECK = gql`
+  const { loading } = useQuery(gql`
     query HealthCheck {
       healthCheck
     }
-  `;
+  `, {
+    fetchPolicy: 'network-only'
+  });
 
-  useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        const { data } = await client.query({
-          query: HEALTH_CHECK,
-          fetchPolicy: 'network-only',
-        });
-
-        if (data?.healthCheck === 'OK') {
-          setIsStarting(false);
-        }
-      } catch (error) {
-        setIsStarting(true);
-      }
-    };
-
-    checkHealth();
-  }, []);
-
-  return isStarting;
-}
+  return loading;
+};
